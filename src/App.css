@@ -1,0 +1,244 @@
+:root {
+  --main-bg-color: #eee;
+  --main-fg-color: #000;
+  --title-bg-color: #DDD;
+  --button-color: #48F;
+}
+html {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+.App {
+  background: var(--main-bg-color);
+  color: var(--main-fg-color);
+}
+.blocked {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 100;
+}
+.dialog {
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+.dialog>* {
+  background: var(--main-bg-color);
+  border-radius: 5px;
+  padding: 1em;
+  max-width: 90%;
+  width: 800px;
+}
+.dialog-heading {
+  display: flex;
+  justify-content: space-between;
+  font-size: xx-large;
+  font-weight: bold;
+  margin: 10px;
+  position: relative;
+}
+.dialog-close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  vertical-align: top;
+}
+.dialog pre {
+  width: 100%;
+  overflow: auto;
+  background: #222;
+  color: #eee;
+  padding: 1em;
+}
+.save-as-gist-pat {
+  display: flex;
+}
+.save-as-gist-pat>div:nth-child(1) {
+  flex: 0 0 auto;
+}
+.save-as-gist-pat>div:nth-child(2) {
+  flex: 1 1 auto;
+}
+.section {
+  margin: 10px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  padding: 1em;
+}
+.section-heading {
+  font-size: large;
+  border-bottom: 1px solid #888;
+  margin-bottom: 1em;
+}
+.bookmark {
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+}
+.disabled {
+  opacity: 0.2;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+h1 {
+  margin: 0;
+  padding: 10px;
+  background: var(--title-bg-color);
+}
+.top,
+.bottom {
+  display: flex;
+  padding: 10px;
+  position: relative;
+}
+.top>div,
+.bottom>div {
+  flex: 1 5 50%;
+}
+.top .right {
+  display: flex;
+}
+.left {
+  width: 50%;
+  position: relative;
+}
+.right {
+  margin-left: 10px;
+}
+.errors {
+  position: fixed;
+  bottom: 0;
+  z-index: 1000;
+}
+.errors>div {
+  background: red;
+  color: white;
+  padding: 0.5em;
+  margin: 0.25em;
+  border-radius: 0.25em;
+}
+input {
+  border: none;
+}
+input[type="text"],
+input[type="password"] {
+  outline: none;
+  width: 100%;
+  font-size: large;
+}
+.charts {
+  margin-top: 1em;
+}
+.code-area {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.5em;
+  height: 200px;
+}
+.code-area {
+  flex: 1 1 auto;
+}
+.expander {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+.hider {
+  width: 1em;
+  color: #888;
+}
+.result {
+  margin-top: 1em;
+}
+.result-result {
+  display: block;
+  width: 100%;
+  margin: 0.25em 0;
+  background-color: #222;
+  border-radius: 0.25em;
+}
+.result-result>span {
+  display: inline-block;
+  padding: 0.125em;
+  width: 0px;
+  transition: width 1s ease-out;
+}
+.hidee {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  transition: height 0.25s ease-out;
+}
+.hidee>* {
+  flex: 1 1 auto;
+}
+.hidee-hide {
+  height: 0px;
+}
+button {
+  background: none;
+  border: 1px solid var(--button-color);
+  border-radius: 0.25em;
+  padding: 0.25em;
+  margin-right: 0.25em;
+  min-width: 1.5em;
+}
+button:hover {
+  background: var(--button-color);
+}
+
+.editor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.editor>div {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.CodeMirror {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 740px) {
+  .top,
+  .bottom {
+    flex-direction: column-reverse;
+  }
+  .left {
+    width: 100%;
+  }
+  .right {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --main-bg-color: #444;
+    --main-fg-color: #fff;
+    --title-bg-color: #222;
+    --button-bg-color: #fff;
+  }
+}
