@@ -3,6 +3,7 @@
   --main-fg-color: #000;
   --title-bg-color: #DDD;
   --button-color: #48F;
+  --link-color: #36C;
 }
 html {
   box-sizing: border-box;
@@ -10,6 +11,9 @@ html {
 }
 *, *:before, *:after {
   box-sizing: inherit;
+}
+a {
+  color: var(--link-color);
 }
 .App {
   background: var(--main-bg-color);
@@ -67,6 +71,10 @@ html {
 }
 .save-as-gist-pat {
   display: flex;
+  align-items: center;
+}
+.save-as-gist-pat>* {
+  vertical-align: middle;
 }
 .save-as-gist-pat>div:nth-child(1) {
   flex: 0 0 auto;
@@ -137,6 +145,11 @@ h1 {
 input {
   border: none;
 }
+input {
+  background: var(--title-bg-color);
+  color: var(--main-fg-color);
+}
+
 input[type="text"],
 input[type="password"] {
   outline: none;
@@ -151,9 +164,11 @@ input[type="password"] {
   flex-direction: column;
   margin-top: 1.5em;
   height: 200px;
-}
-.code-area {
   flex: 1 1 auto;
+  background: #555;
+}
+.code-area button {
+  margin-right: 0;
 }
 .expander {
   display: flex;
@@ -240,5 +255,6 @@ button:hover {
     --main-fg-color: #fff;
     --title-bg-color: #222;
     --button-bg-color: #fff;
-  }
+    --link-color: #6CF;
+ }
 }

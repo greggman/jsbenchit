@@ -1,6 +1,9 @@
+O fix input jumping to end
+O fix expander
 O show error message for test
 O allow disable test
 O show results by browsers?
+O set tabindex
 
 O run benchmarks in iframe? Issue, user has gist credientials so
   need to make sure tests can't post them.

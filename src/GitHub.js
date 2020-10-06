@@ -2,7 +2,7 @@ import { Octokit } from '@octokit/rest';
 
 const userAgent = 'jsBenchIt v0.0.1';
 
-const getGistContent = gist => gist.files['jsBenchIt.json'].content;
+const getGistContent = gist => JSON.parse(gist.files['jsBenchIt.json'].content);
 
 export default class GitHub {
   constructor() {

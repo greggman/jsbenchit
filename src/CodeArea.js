@@ -4,6 +4,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/theme/eclipse.css';
 import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/mode/htmlmixed/htmlmixed.js';
 import 'codemirror/addon/scroll/simplescrollbars.js';
 
 import { classNames } from './css-utils.js';

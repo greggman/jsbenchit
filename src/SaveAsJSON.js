@@ -5,7 +5,7 @@ export default function SaveAsJSON(props) {
   return (
     <div>
       <div>Copy the text below, paste into the load ui or put somewhere on the net
-        and make make your own URL with <code>{window.location.origin}?src=url-to-json</code>.
+        and make your own URL with <code>{window.location.origin}?src=url-to-json</code>.
         
       </div>
       <pre>{JSON.stringify(data)}</pre>

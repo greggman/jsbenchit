@@ -27,11 +27,11 @@ export function set(name, newValue) {
   }
   trackedValue.value = newValue;
   const fns = [...trackedValue.subscriptions.keys()];
-  setTimeout(() => {
+  //setTimeout(() => {
     for (const fn of fns) {
       fn(newValue, name);
     }
-  });
+  //});
 }
 
 export function subscribe(name, fn) {
@@ -116,6 +116,26 @@ export function addTest() {
     name,
     code: `// ${name}`,
   });
+  notify();
+}
+
+export function setTitle(title) {
+  data.title = title;
+  notify();
+}
+
+export function setDescription(desc) {
+  data.description = desc;
+  notify();
+}
+
+export function setHTML(html) {
+  data.html = html;
+  notify();
+}
+
+export function setSetup(setup) {
+  data.setup = setup;
   notify();
 }
 

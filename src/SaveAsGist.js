@@ -32,7 +32,7 @@ export default class SaveAsGist extends React.Component {
     return (
       <div>
         <div className="save-as-gist-pat">
-          <div>Personal Access Token:</div>
+          <div>Personal Access Token:&nbsp;</div>
           <div>
             <input
               type="password"
@@ -46,7 +46,7 @@ export default class SaveAsGist extends React.Component {
           <button
             className={classNames({disabled: !pat})}
             onClick={this.onSave}
-          >Save</button>
+          >Save to new Gist</button>
         </p>
         <p>
           <a href="https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token">Create a Personal Access Token</a> with only <b>gist</b> permissions.

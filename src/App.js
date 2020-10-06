@@ -9,6 +9,7 @@ import TestArea from './TestArea.js';
 import Results from './Results.js';
 import runTests from './run-tests.js';
 import SaveAs from './SaveAs.js';
+import {isCompressedBase64, compressedBase64ToJSON} from './SaveAsURL.js';
 
 import './App.css';
 
@@ -20,6 +21,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+const noJSX = () => [];
 
 class App extends React.Component {
   constructor() {
@@ -28,7 +30,7 @@ class App extends React.Component {
       path: window.location.pathname,
       running: false,
       loading: false,
-      saveAs: true,
+      dialog: noJSX,
       dataVersion: 0,
       gistId: '',
       pat: localStorage.getItem('pat'),
@@ -59,14 +61,11 @@ class App extends React.Component {
     // which all the documentation says "if you call this
     // you're doing it wrong".
     //
-    // Redux is fucking joke. 50 lines code needed to set
+    // Redux is a joke. 50 lines code needed to set
     // a single field. Repeat those 50 lines for every field.
     // Things like redux-tools make it less to type those
     // 50 lines but they still execute 50 to 500 lines of code
-    // just to fucking set a single value.
-    //
-    // And, AFAIK you still don't get any benefit WRT the UI
-    // and it not re-rendering everything
+    // just to set a single value.
     model.subscribe('dataVersion', (dataVersion) => {
       this.setState({dataVersion})
     });
@@ -77,6 +76,9 @@ class App extends React.Component {
       if (isGistId(src)) {
         const data = await this.github.getAnonGist(src);
         model.setData(data);
+      } else if (isCompressedBase64(src)) {
+        const data = compressedBase64ToJSON(src);
+        model.setData(data);
       } else {
         const res = await fetch(src);
         const data = await res.json();
@@ -86,6 +88,12 @@ class App extends React.Component {
       console.warn(e);
       this.addError(`could not load benchmark: src=${src}`);
     }
+    await wait();
+    await wait();
+    await wait();
+    await wait();
+    await wait();
+    await wait();
     this.setState({loading: false});
   }
   addError = (msg) => {
@@ -93,6 +101,9 @@ class App extends React.Component {
     setTimeout(() => {
       this.setState({errors: this.state.errors.slice(0, this.state.errors.length - 1)});
     }, 5000);
+  }
+  closeDialog = () => {
+    this.setState({dialog: noJSX});
   }
   handleNew = async() => {
     this.setState({loading: true});
@@ -115,7 +126,7 @@ class App extends React.Component {
   handleSave = async () => {
   }
   handleSaveAs = () => {
-    this.setState({saveAs: true});
+    this.setState({dialog: this.renderSaveAs});
   }
   handleHelp = () => {
 
@@ -125,11 +136,22 @@ class App extends React.Component {
   }
   handleOnSave = (gistId) => {
     window.history.pushState({}, '', `${window.location.origin}?src=${gistId}`);
-    this.setState({saveAs: false, gistId});
+    this.setState({dialog: noJSX, gistId});
+  }
+  renderSaveAs = () => {
+    const data = model.data;
+    return (
+      <SaveAs 
+        onSave={this.handleOnSave}
+        onClose={this.closeDialog}
+        addError={this.addError}
+        github={this.github}
+        data={data} />
+    );
   }
   render() {
     const data = model.data;
-    const {running, loading, saveAs} = this.state;
+    const {running, loading, dialog} = this.state;
     const disabled = running;
     const hideStyle = {
       ...(!running && {display: 'none'}),
@@ -140,12 +162,12 @@ class App extends React.Component {
         <h1 className="head">jsBenchIt</h1>
         <div className="top">
           <div className={classNames("left", {disabled})}>
-            <EditLine value={data.title} onChange={(v) => data.title = v} />
+            <EditLine value={data.title} onChange={v => model.setTitle(v)} />
           </div>
           <div className={classNames("right", {disabled})}>
             <button onClick={this.handleRun}>Run</button>
-            <button onClick={this.handleSave}>Save</button>
-            <button onClick={this.handleSaveAs} className={classNames({disabled: !canSave})}>Save As</button>
+            <button onClick={this.handleSave} className={classNames({disabled: !canSave})}>Save</button>
+            <button onClick={this.handleSaveAs}>Save As</button>
             <button onClick={this.handleNew}>New</button>
             <button onClick={this.handleLoad}>Load</button>
             <button onClick={this.handleHelp}>?</button>
@@ -155,9 +177,23 @@ class App extends React.Component {
           loading ? [] : (
             <div className="bottom">
               <div className="left">
-                <NamedCodeArea value={data.description} title="Description" options={{editor: {lineNumbers: false, lineWrapping: true}}} />
-                <NamedCodeArea value={data.html} title="HTML" />
-                <NamedCodeArea value={data.setup} title="Setup" />
+                <NamedCodeArea
+                  title="Description"
+                  value={data.description}
+                  onValueChange={v => model.setDescription(v)}
+                  options={{editor: {mode: 'null', lineNumbers: false, lineWrapping: true}}}
+                />
+                <NamedCodeArea
+                  title="HTML"
+                  value={data.html}
+                  onValueChange={v => model.setHTML(v)}
+                  options={{editor: {mode: 'htmlmixed'}}}
+                />
+                <NamedCodeArea
+                  title="Setup"
+                  value={data.setup}
+                  onValueChange={v => model.setSetup(v)}
+                 />
                 {
                   data.tests.map((test, ndx) => {
                     const extra = (
@@ -193,7 +229,7 @@ class App extends React.Component {
             </div>
           )
         }
-        {saveAs ? <SaveAs onSave={this.handleOnSave} addError={this.addError} github={this.github} data={data} /> : []}
+        {dialog()}
         <div className="errors">
           {
             this.state.errors.map((msg, i) => (<div key={`err${i}`}>{msg}</div>))
