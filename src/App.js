@@ -165,12 +165,12 @@ class App extends React.Component {
             <EditLine value={data.title} onChange={v => model.setTitle(v)} />
           </div>
           <div className={classNames("right", {disabled})}>
-            <button onClick={this.handleRun}>Run</button>
-            <button onClick={this.handleSave} className={classNames({disabled: !canSave})}>Save</button>
-            <button onClick={this.handleSaveAs}>Save As</button>
-            <button onClick={this.handleNew}>New</button>
-            <button onClick={this.handleLoad}>Load</button>
-            <button onClick={this.handleHelp}>?</button>
+            <button tabIndex="1" onClick={this.handleRun}>Run</button>
+            <button tabIndex="1" onClick={this.handleSave} className={classNames({disabled: !canSave})}>Save</button>
+            <button tabIndex="1" onClick={this.handleSaveAs}>Save As</button>
+            <button tabIndex="1" onClick={this.handleNew}>New</button>
+            <button tabIndex="1" onClick={this.handleLoad}>Load</button>
+            <button tabIndex="1" onClick={this.handleHelp}>?</button>
           </div>
         </div>
         {

@@ -1,9 +1,12 @@
-O fix input jumping to end
 O fix expander
-O show error message for test
+O make sizes of code areas adjustable
+O show error message for tests
 O allow disable test
 O show results by browsers?
-O set tabindex
+O if ?debug then show header github counts
+O why is save missing?
+O add hints
+O load revisions
 
 O run benchmarks in iframe? Issue, user has gist credientials so
   need to make sure tests can't post them.
