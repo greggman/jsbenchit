@@ -16,5 +16,5 @@ deploy:
   local-dir: build
   # ⋮
   on:
-    repo: greggman/main
+    repo: greggman/jsbenchit
     branch: main
