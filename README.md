@@ -1,4 +1,6 @@
-# JS-Gist-Perf
+# JSBenchIt
+
+**(! still work-in-progress, not ready for use)**
 
 A JavaScript Perf Tester based on Github Gists
 
