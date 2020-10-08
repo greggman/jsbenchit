@@ -1,26 +1,11 @@
 import React, {useState} from 'react';
-import {Controlled as CodeMirror} from 'react-codemirror2';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css';
-import 'codemirror/theme/eclipse.css';
-import 'codemirror/mode/javascript/javascript.js';
-import 'codemirror/mode/htmlmixed/htmlmixed.js';
-import 'codemirror/addon/scroll/simplescrollbars.js';
-
-import { classNames } from './css-utils.js';
-
-const darkMatcher = window.matchMedia
-    ? window.matchMedia('(prefers-color-scheme: dark)')
-    : {};
-// darkMatcher.addListener(render);
-
-const noop = () => {};
+import {Resizable} from 're-resizable';
+import Code from './Code.js';
+import {classNames} from './css-utils.js';
 
 export default function CodeArea(props) {
-  const {value, heading, extra = [], options = {}, onValueChange = noop} = props;
+  const {value, hackKey, heading, extra = [], options = {}, onValueChange} = props;
   const [show, setShow] = useState(props.show === false || true);
-  const [localValue, setLocalValue] = useState(value);
-  const isDarkMode = darkMatcher.matches;
   const hideeHide = !show;
   return (
     <div className="code-area">
@@ -29,23 +14,19 @@ export default function CodeArea(props) {
           {heading}
         </div>
         <div className={classNames("hidee", {hideeHide})}>
-          <div className="editor">
-            <CodeMirror
-              value={localValue}
-              options={{
-                mode: 'javascript',
-                // scrollbarStyle: 'overlay',
-                theme: isDarkMode ? 'material' : 'eclipse',
-                ...(options.editor && options.editor),
-              }}
-              onBeforeChange={(editor, data, value) => {
-                setLocalValue(value);
-              }}
-              onChange={(editor, data, value) => {
-                onValueChange(value);
-              }}
+          <Resizable
+            style={{background: 'red', position: 'relative'}}
+            defaultSize={{height: 200}}
+            minHeight={20}
+            enable={{top:false, right:false, bottom:true, left:false, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false}}
+          >
+            <Code
+              hackKey={hackKey}
+              value={value}
+              options={options}
+              onValueChange={onValueChange}
             />
-          </div>
+          </Resizable>
           {extra}
         </div>
     </div>

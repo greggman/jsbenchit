@@ -3,12 +3,15 @@ import React from 'react';
 import { classNames } from './css-utils.js';
 import EditLine from './EditLine.js';
 import GitHub from './GitHub.js';
+import Help from './Help.js';
+import LatestResults from './LatestResults.js';
+import Load from './Load.js';
 import * as model from './model.js';
 import NamedCodeArea from './NamedCodeArea.js';
+import Platforms from './Platforms.js';
+import Save from './Save.js';
 import TestArea from './TestArea.js';
-import Results from './Results.js';
-import runTests from './run-tests.js';
-import SaveAs from './SaveAs.js';
+import TestRunner from './TestRunner.js';
 import {isCompressedBase64, compressedBase64ToJSON} from './SaveAsURL.js';
 
 import './App.css';
@@ -20,7 +23,6 @@ if (process.env.NODE_ENV === 'development') {
   window.d = model.data;
 }
 
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const noJSX = () => [];
 
 class App extends React.Component {
@@ -34,13 +36,27 @@ class App extends React.Component {
       dataVersion: 0,
       gistId: '',
       pat: localStorage.getItem('pat'),
-      errors: [],
+      messages: [],
     };
     this.github = new GitHub();
   }
   componentDidMount() {
     const query = Object.fromEntries(new URLSearchParams(window.location.search).entries());
-    if (query.src) {
+    const backup = localStorage.getItem('backup');
+    let loaded = false;
+    if (backup) {
+      try {
+        const data = JSON.parse(backup);
+        if (data.href === window.location.href) {
+          model.setData(data);
+          loaded = true;
+          this.addInfo('loaded backup from local storage')
+        }
+      } catch (e) {
+        //
+      }
+    }
+    if (!loaded && query.src) {
       this.loadData(query.src);
     }
     model.add('path', window.location.pathname);
@@ -69,6 +85,11 @@ class App extends React.Component {
     model.subscribe('dataVersion', (dataVersion) => {
       this.setState({dataVersion})
     });
+    // this is a hack because I can't figure out how to
+    // update the CodeMirror areas
+    model.subscribe('updateVersion', (updateVersion) => {
+      this.setState({updateVersion})
+    });
   }
   async loadData(src) {
     this.setState({loading: true});
@@ -88,86 +109,92 @@ class App extends React.Component {
       console.warn(e);
       this.addError(`could not load benchmark: src=${src}`);
     }
-    await wait();
-    await wait();
-    await wait();
-    await wait();
-    await wait();
-    await wait();
     this.setState({loading: false});
   }
-  addError = (msg) => {
-    this.setState({errors: [msg, ...this.state.errors]});
+  addMsg = (msg, className) => {
+    this.setState({messages: [{msg, className}, ...this.state.messages]});
     setTimeout(() => {
-      this.setState({errors: this.state.errors.slice(0, this.state.errors.length - 1)});
+      this.setState({messages: this.state.messages.slice(0, this.state.messages.length - 1)});
     }, 5000);
   }
+  addInfo = (msg) => this.addMsg(msg, 'info');
+  addError = (msg) => this.addMsg(msg, 'error');
   closeDialog = () => {
     this.setState({dialog: noJSX});
   }
   handleNew = async() => {
-    this.setState({loading: true});
-    // this is a hack! CodeArea doesn't update via state. We should fix that
-    // but for now we just turn it off with (loading: true) so a new one will be created.
-    await wait();
-    model.setData(model.newTestData);
-    await wait();
-    await wait();
-    this.setState({loading: false});
+    model.setData(model.getNewTestData());
   }
   handleRun = async () => {
     this.setState({running: true});
+    localStorage.setItem('backup', JSON.stringify({
+      href: window.location.href,
+      data: model.data,
+    }));
     console.log('--start--');
-    const benches = await runTests(model.data);
+    const testRunner = new TestRunner();
+    const benches = await testRunner.run(model.data);
     console.log(benches);
     console.log('--done--');
     this.setState({running: false});
   }
   handleSave = async () => {
-  }
-  handleSaveAs = () => {
-    this.setState({dialog: this.renderSaveAs});
+    this.setState({dialog: this.renderSave});
   }
   handleHelp = () => {
-
+    this.setState({dialog: this.renderHelp});
   }
   handleLoad = () => {
-
+    this.setState({dialog: this.renderLoad});
+  }
+  handleOnLoad = async() => {
+    this.setState({dialog: noJSX});
   }
   handleOnSave = (gistId) => {
     window.history.pushState({}, '', `${window.location.origin}?src=${gistId}`);
     this.setState({dialog: noJSX, gistId});
   }
-  renderSaveAs = () => {
+  renderHelp() {
+    return (<Help />);
+  }
+  renderLoad = () => {
+    return (
+      <Load
+        onLoad={this.handleOnLoad}
+        onClose={this.closeDialog}
+        addError={this.addError}
+      />
+    );
+  }
+  renderSave = () => {
     const data = model.data;
     return (
-      <SaveAs 
+      <Save
         onSave={this.handleOnSave}
         onClose={this.closeDialog}
         addError={this.addError}
         github={this.github}
+        gistId={this.state.gistId}
         data={data} />
     );
   }
   render() {
     const data = model.data;
-    const {running, loading, dialog} = this.state;
+    const {running, loading, dialog, updateVersion: hackKey} = this.state;
     const disabled = running;
     const hideStyle = {
       ...(!running && {display: 'none'}),
     };
-    const canSave = this.state.pat && this.state.gistId;
     return (
       <div className="App">
-        <h1 className="head">jsBenchIt</h1>
+        <h1 className="head">jsBenchIt.org<a href="https://github.com/greggman/jsbenchit/"><img alt="github" src="/resources/images/octocat-icon.svg" style={{height: '1em', float: 'right'}}/></a></h1>
         <div className="top">
           <div className={classNames("left", {disabled})}>
             <EditLine value={data.title} onChange={v => model.setTitle(v)} />
           </div>
           <div className={classNames("right", {disabled})}>
             <button tabIndex="1" onClick={this.handleRun}>Run</button>
-            <button tabIndex="1" onClick={this.handleSave} className={classNames({disabled: !canSave})}>Save</button>
-            <button tabIndex="1" onClick={this.handleSaveAs}>Save As</button>
+            <button tabIndex="1" onClick={this.handleSave}>Save</button>
             <button tabIndex="1" onClick={this.handleNew}>New</button>
             <button tabIndex="1" onClick={this.handleLoad}>Load</button>
             <button tabIndex="1" onClick={this.handleHelp}>?</button>
@@ -178,19 +205,14 @@ class App extends React.Component {
             <div className="bottom">
               <div className="left">
                 <NamedCodeArea
-                  title="Description"
-                  value={data.description}
-                  onValueChange={v => model.setDescription(v)}
-                  options={{editor: {mode: 'null', lineNumbers: false, lineWrapping: true}}}
+                  hackKey={hackKey}
+                  title="Initialization"
+                  value={data.initialization}
+                  onValueChange={v => model.setInitialization(v)}
                 />
                 <NamedCodeArea
-                  title="HTML"
-                  value={data.html}
-                  onValueChange={v => model.setHTML(v)}
-                  options={{editor: {mode: 'htmlmixed'}}}
-                />
-                <NamedCodeArea
-                  title="Setup"
+                  hackKey={hackKey}
+                  title="Before Each Test"
                   value={data.setup}
                   onValueChange={v => model.setSetup(v)}
                  />
@@ -202,6 +224,7 @@ class App extends React.Component {
                     return (
                       <TestArea
                         key={`ca${ndx}`}
+                        hackKey={hackKey}
                         desc={`Case ${ndx + 1}`}
                         title={test.name}
                         value={test.code}
@@ -221,18 +244,16 @@ class App extends React.Component {
                 <div className="blocked" style={hideStyle} />
               </div>
               <div className="right">
-                <div className="charts">
-                  results
-                </div>
-                <Results tests={data.tests}/>
+                <LatestResults tests={data.tests}/>
+                <Platforms tests={data.tests}/>
               </div>
             </div>
           )
         }
         {dialog()}
-        <div className="errors">
+        <div className="messages">
           {
-            this.state.errors.map((msg, i) => (<div key={`err${i}`}>{msg}</div>))
+            this.state.messages.map(({msg, className}, i) => (<div className={className} key={`err${i}`}>{msg}</div>))
           }
         </div>
       </div>

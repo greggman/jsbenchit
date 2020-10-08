@@ -5,7 +5,7 @@ import SaveAsJSON from './SaveAsJSON.js';
 import SaveAsURL from './SaveAsURL.js';
 import Section from './Section.js';
 
-export default function SaveAs(props) {
+export default function Save(props) {
   const {data, github, onSave, onClose, addError} = props;
   return (
     <Dialog title="Save As" onClose={onClose}>

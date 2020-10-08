@@ -2,6 +2,11 @@
 /* global model */
 
 const benchmarkToData = b => {
+  const stats = {
+    ...(b.stats && b.stats),
+    numSamples: b.stats ? b.stats.sample.length : 0,
+  };
+  delete stats.sample;
   return {
     aborted: b.aborted,
     //compiled: b.compiled,
@@ -10,7 +15,7 @@ const benchmarkToData = b => {
     count: b.count,
     cycles: b.cycles,
     hz: b.hz,
-    ...(b.stats && {stats: {...b.stats}}),
+    stats,
     ...(b.times && {times: {...b.times}}),
     ...(b.error && {error: {...b.error}}),
   };

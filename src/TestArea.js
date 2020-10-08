@@ -3,7 +3,7 @@ import EditLine from './EditLine.js';
 import CodeArea from './CodeArea.js';
 
 export default function TestArea(props) {
-  const {desc, title, onTitleChange} = props;
+  const {desc, title, onTitleChange, hackKey} = props;
   const heading = (
     <EditLine
       placeholder={desc}
@@ -13,6 +13,6 @@ export default function TestArea(props) {
   );
 
   return (
-    <CodeArea {...props} heading={heading} />
+    <CodeArea key={hackKey} {...props} heading={heading} />
   );
 }

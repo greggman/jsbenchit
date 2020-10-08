@@ -14,7 +14,7 @@ export default class SaveAsGist extends React.Component {
     this.setState({pat});
     localStorage.setItem('pat', pat);
   }
-  onSave = async() => {
+  onSaveNew = async() => {
     this.setState({saving: true});
     const {data, github, addError, onSave} = this.props;
     const {pat} = this.state;
@@ -27,8 +27,22 @@ export default class SaveAsGist extends React.Component {
     }
     this.setState({saving: false});
   }
+  onSaveOverExisting = async() => {
+    this.setState({saving: true});
+    const {data, gistId, github, addError} = this.props;
+    const {pat} = this.state;
+    github.setPat(pat);
+    try {
+      await github.updateGist(gistId, data);
+    } catch (e) {
+      addError(`could not update gist: ${e}`)
+    }
+    this.setState({saving: false});
+  }
   render() {
     const {pat} = this.state;
+    const {gist_id} = this.props;
+    const canSave = pat && gist_id
     return (
       <div>
         <div className="save-as-gist-pat">
@@ -45,8 +59,12 @@ export default class SaveAsGist extends React.Component {
         <p>
           <button
             className={classNames({disabled: !pat})}
-            onClick={this.onSave}
+            onClick={this.onSaveNew}
           >Save to new Gist</button>
+          <button
+            className={classNames({disabled: !canSave})}
+            onClick={this.onSaveOverExisting}
+          >Update Existing Gist</button>
         </p>
         <p>
           <a href="https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token">Create a Personal Access Token</a> with only <b>gist</b> permissions.

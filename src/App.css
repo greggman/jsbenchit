@@ -46,6 +46,8 @@ a {
   border-radius: 5px;
   padding: 1em;
   max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
   width: 800px;
 }
 .dialog-heading {
@@ -130,17 +132,23 @@ h1 {
 .right {
   margin-left: 10px;
 }
-.errors {
+.messages {
   position: fixed;
   bottom: 0;
   z-index: 1000;
 }
-.errors>div {
-  background: red;
+.messages>div {
+  background: #888;
   color: white;
   padding: 0.5em;
   margin: 0.25em;
   border-radius: 0.25em;
+}
+.messages .error {
+  background: #C00;
+}
+.messages .info {
+  background: #00F;
 }
 input {
   border: none;
@@ -163,12 +171,15 @@ input[type="password"] {
   display: flex;
   flex-direction: column;
   margin-top: 1.5em;
-  height: 200px;
   flex: 1 1 auto;
   background: #555;
 }
 .code-area button {
   margin-right: 0;
+}
+.code-area input {
+  background: #555;
+  font-size: medium;
 }
 .expander {
   display: flex;
@@ -188,12 +199,13 @@ input[type="password"] {
   margin: 0.25em 0;
   background-color: #222;
   border-radius: 0.25em;
+  white-space: nowrap;
 }
 .result-result>span {
   display: inline-block;
   padding: 0.125em;
   width: 0px;
-  transition: width 1s ease-out;
+  transition: width 0.2s ease-out;
 }
 .hidee {
   position: relative;
@@ -201,17 +213,18 @@ input[type="password"] {
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  transition: height 0.25s ease-out;
 }
 .hidee>* {
   flex: 1 1 auto;
 }
 .hidee-hide {
-  height: 0px;
+  height: 0;
+  overflow: hidden;
 }
 button {
   background: none;
   border: 1px solid var(--button-color);
+  color: var(--main-fg-color);
   border-radius: 0.25em;
   padding: 0.25em;
   margin-right: 0.25em;
@@ -221,19 +234,23 @@ button:hover {
   background: var(--button-color);
 }
 
-.editor {
+.react-codemirror2 {
   position: relative;
-  width: 100%;
-  height: 100%;
-}
-.editor>div {
-  position: relative;
-  width: 100%;
   height: 100%;
 }
 .CodeMirror {
   width: 100%;
   height: 100%;
+}
+.CodeMirror-overlayscroll-horizontal div,
+.CodeMirror-overlayscroll-vertical div {
+  opacity: 0.3;
+}
+.markdown code {
+  background: var(--title-bg-color);
+  padding: 0.25em;
+  border-radius: 0.5em;
+  line-height: 2;
 }
 
 @media (max-width: 740px) {
@@ -256,5 +273,5 @@ button:hover {
     --title-bg-color: #222;
     --button-bg-color: #fff;
     --link-color: #6CF;
- }
+  }
 }

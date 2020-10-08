@@ -1,30 +1,35 @@
 import React from 'react';
-
-function Progress(props) {
-  const {max, value, text} = props;
-  return (
-    <div className="result-result">
-        <span style={{width: `${value / max * 100 | 0}%`}}>{text}</span>
-    </div>
-  );
-}
+import {formatResults, testResultsAreValid} from './model.js';
+import Progress from './Progress.js';
 
 function Result(props) {
-  const {name, result} = props.test;
+  const {max, test} = props;
+  const {name, results} = test;
+  const msg = formatResults(results);
   return (
     <div className="result">
       <div className="result-name">{name}</div>
-      <Progress max="100" value={result} className="result-result" text={result} />
+      <Progress
+        max={max}
+        value={results.hz}
+        className="result-result"
+        text={msg}
+      />
     </div>
   )
 }
 
+
+
 export default function Results(props) {
   const {tests} = props;
+  const max = tests
+      .filter(testResultsAreValid)
+      .reduce((max, test) => Math.max(max, test.results.hz || 0), 0);
   return (
-    <div className="results">
+    <div>
       {
-        tests.map((test, ndx) => (<Result test={test} key={`res${ndx}`} />))
+        tests.map((test, ndx) => (<Result max={max} test={test} key={`res${ndx}`} />))
       }
     </div>
   );
