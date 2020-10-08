@@ -5,7 +5,7 @@ import {classNames} from './css-utils.js';
 
 export default function CodeArea(props) {
   const {value, hackKey, heading, extra = [], options = {}, onValueChange} = props;
-  const [show, setShow] = useState(props.show === false || true);
+  const [show, setShow] = useState(props.show === false ? false : true);
   const hideeHide = !show;
   return (
     <div className="code-area">

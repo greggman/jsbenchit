@@ -24,11 +24,10 @@ export default class GitHub {
     }
   }
   async getUserGists() {
-    // look into pagination api
-    // gists = await octokit.paginate(octokit.gists.list);
-    return await this.authorizedOctokit.gists.list();
+    const gists = await this.authorizedOctokit.paginate(this.authorizedOctokit.gists.list);
+    return gists.filter(gist => !!gist.files['jsBenchIt.json']);
+    // return await this.authorizedOctokit.gists.list();
   }
-  // "92d9e8b2a5215b0217d459e735a9226b"
   async getUserGist(gist_id) {
     const gist = await this.octokit.gists.get({gist_id});
     return getGistContent(gist);
@@ -46,7 +45,7 @@ export default class GitHub {
         'jsBenchIt.json': {content: JSON.stringify(data)},
       },
     });
-    return gist.id;
+    return gist.data.id;
   }
   /* returns 
 {status: 201, url: "https://api.github.com/gists", headers: {…}, data: {…}}

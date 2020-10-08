@@ -1,5 +1,5 @@
 import React from 'react';
-import { classNames } from './css-utils';
+import { classNames } from './css-utils.js';
 
 export default class SaveAsGist extends React.Component {
   constructor () {

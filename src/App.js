@@ -48,7 +48,7 @@ class App extends React.Component {
       try {
         const data = JSON.parse(backup);
         if (data.href === window.location.href) {
-          model.setData(data);
+          model.setData(data.data);
           loaded = true;
           this.addInfo('loaded backup from local storage')
         }
@@ -163,6 +163,7 @@ class App extends React.Component {
         onLoad={this.handleOnLoad}
         onClose={this.closeDialog}
         addError={this.addError}
+        github={this.github}
       />
     );
   }
@@ -187,7 +188,17 @@ class App extends React.Component {
     };
     return (
       <div className="App">
-        <h1 className="head">jsBenchIt.org<a href="https://github.com/greggman/jsbenchit/"><img alt="github" src="/resources/images/octocat-icon.svg" style={{height: '1em', float: 'right'}}/></a></h1>
+        <div className="head">
+          <div>
+            <img src="/resources/images/logo.svg" alt="logo"/>
+          jsBenchIt.org
+          </div>
+          <div>
+          <a href="https://github.com/greggman/jsbenchit/">
+            <img alt="github" src="/resources/images/octocat-icon.svg"/>
+          </a>
+          </div>
+        </div>
         <div className="top">
           <div className={classNames("left", {disabled})}>
             <EditLine value={data.title} onChange={v => model.setTitle(v)} />
@@ -208,12 +219,14 @@ class App extends React.Component {
                   hackKey={hackKey}
                   title="Initialization"
                   value={data.initialization}
+                  show={data.initialization.length > 0}
                   onValueChange={v => model.setInitialization(v)}
                 />
                 <NamedCodeArea
                   hackKey={hackKey}
                   title="Before Each Test"
                   value={data.setup}
+                  show={data.setup.length > 0}
                   onValueChange={v => model.setSetup(v)}
                  />
                 {

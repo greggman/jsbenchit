@@ -6,3 +6,7 @@ O show results by browsers?
 O if ?debug then show header github counts
 O add hints
 O load revisions
+O add logos, icon
+  O logo
+  O icon
+  O og

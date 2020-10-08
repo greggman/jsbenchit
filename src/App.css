@@ -8,9 +8,25 @@
 html {
   box-sizing: border-box;
   font-family: sans-serif;
+  line-height: 1.5;
 }
 *, *:before, *:after {
   box-sizing: inherit;
+}
+.head {
+  display: flex;
+  font-size: xx-large;
+  font-weight: bold;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 10px;
+  background: var(--title-bg-color);
+}
+.head img {
+  height: 1em;
+  vertical-align: middle;
+  margin: 5px;
 }
 a {
   color: var(--link-color);
@@ -107,11 +123,6 @@ a {
   pointer-events: none;
   cursor: not-allowed;
 }
-h1 {
-  margin: 0;
-  padding: 10px;
-  background: var(--title-bg-color);
-}
 .top,
 .bottom {
   display: flex;
@@ -152,8 +163,7 @@ h1 {
 }
 input {
   border: none;
-}
-input {
+  padding: 0.25em;
   background: var(--title-bg-color);
   color: var(--main-fg-color);
 }
@@ -166,6 +176,9 @@ input[type="password"] {
 }
 .charts {
   margin-top: 1em;
+}
+.named {
+  padding: 0.25em;
 }
 .code-area {
   display: flex;
@@ -223,12 +236,13 @@ input[type="password"] {
 }
 button {
   background: none;
-  border: 1px solid var(--button-color);
+  border: 2px solid var(--button-color);
   color: var(--main-fg-color);
   border-radius: 0.25em;
   padding: 0.25em;
   margin-right: 0.25em;
   min-width: 1.5em;
+  font-weight: bold;
 }
 button:hover {
   background: var(--button-color);
@@ -252,11 +266,22 @@ button:hover {
   border-radius: 0.5em;
   line-height: 2;
 }
+.gists {
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  border: none;
+}
+.gists tr:nth-child(2n) {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.gists td:nth-child(2n) {
+  text-align: right;
+}
 
 @media (max-width: 740px) {
   .top,
   .bottom {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
   .left {
     width: 100%;

@@ -6,6 +6,10 @@ const converter = new showdown.Converter();
 const text = `
 Add your test cases, click --Run--.
 
+## Contribute, Fix, Enhance!
+
+[https://github.com/greggman/jsbenchit](https://github.com/greggman/jsbenchit)
+
 ## Saving
 
 You can save your tests in multiple ways.
@@ -25,20 +29,22 @@ You can save your tests in multiple ways.
 
    Note the id in the URL after you create the gist.
 
-   Create a url in the form --https://jsbenchit.org/src?<gist_id>--.
+   Create a url in the form --https://jsbenchit.org/?src=<gist_id>--.
+
+   Example: https://jsbenchit.org/?src=025c51db6329e93a80140050857c2636
 
 3. Save it manually somewhere else.
 
    If there's some other service that will provide a string via
    http get then copy and save the JSON there then create a URL
-   in the form of --https://jsbenchit.org/src?<url>--. Note: you
+   in the form of --https://jsbenchit.org/?src=<url>--. Note: you
    will have to escape the URL although if just paste it into your
    browser it will likely do the conversion for you.
 
-4. Create a bookmark or link
+4. Save it as a bookmark or link
 
    In the SaveAs dialog there's a link that contains all the data
-   for your benchmarks.
+   for your benchmark.
 
 ## Saving Notes
 
