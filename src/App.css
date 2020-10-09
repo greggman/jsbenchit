@@ -183,7 +183,7 @@ input[type="password"] {
 .code-area {
   display: flex;
   flex-direction: column;
-  margin-top: 1.5em;
+  margin-bottom: 1.5em;
   flex: 1 1 auto;
   background: #555;
 }
@@ -198,6 +198,7 @@ input[type="password"] {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
+  align-items: center;
 }
 .hider {
   width: 1em;
