@@ -18,8 +18,6 @@ object-assign
  * Released under the MIT License.
  */
 
-/*! showdown v 1.9.1 - 02-11-2019 */
-
 /** @license React v0.19.1
  * scheduler.production.min.js
  *
@@ -46,3 +44,5 @@ object-assign
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
+/** @license URI.js v4.4.0 (c) 2011 Gary Court. License: http://github.com/garycourt/uri-js */

@@ -1,10 +1,12 @@
 // in separate script tag so we get error from other script's
 // syntax errors
 window.addEventListener('error', (e) => {
+  console.error(e);
   const data = {
-    ...(e.message && e.message),
-    ...(e.lineno && e.lineno),
-    ...(e.colno && e.colno),
+    ...(e.message && {message: e.message}),
+    ...(e.filename && {filename: e.filename}),
+    ...(e.lineno && {lineno: e.lineno}),
+    ...(e.colno && {colno: e.colno}),
   }
-  window.parent.postMessage({type: 'error', data}, "*");
+  window.parent.postMessage({type: 'uncaughtError', data}, "*");
 });
