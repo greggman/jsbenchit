@@ -22,7 +22,7 @@ export default function Platforms(props) {
         {
           platforms.map((platform, ndx) => {
             return (
-              <div key={`plat${ndx}`}>
+              <div key={`plat${ndx}`} className="results">
                 <div>{parse(platform).description}</div>
                 <Results tests={tests.filter(test => test.platforms[platform])} />
               </div>

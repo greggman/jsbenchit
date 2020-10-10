@@ -1,6 +1,11 @@
 import * as model from './model.js';
 
 export default class TestRunner {
+  abort() {
+    if (this._abortImpl) {
+      this._abortImpl();
+    }
+  }
   run(data) {
     return new Promise(resolve => {
       const base = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : window.location.origin;
@@ -22,29 +27,49 @@ export default class TestRunner {
       const iframe = document.createElement('iframe');
       model.clearAllTestResults();
 
+      const cleanup = () => {
+        window.removeEventListener('message', handleMessage);
+        iframe.remove();
+      };
+
+      const abort = () => {
+        if (iframe.contentWindow) {
+          iframe.contentWindow.postMessage({type: 'abort'}, '*');
+        }
+        cleanup();
+      };
+      this._abortImpl = abort;
+
+      const updateTestResults = (data) => {
+        const ndx = parseInt(data.name);
+        const newData = {...data};
+        delete newData.id;
+        delete newData.name;
+        model.setTestResult(ndx, newData, window.navigator.userAgent);
+      };
+
       const handlers = {
-        // window.addEventListener('error')
+        // error caught by window.addEventListener('error')
         uncaughtError(data) {
+          abort();
+          resolve({success: false, data});
         },
         // benchmark onAbort
         abort(data) {
+          debugger;
         },
         // benchmark onError
         error(data) {
+          updateTestResults(data);
         },
         // benchmark onCycle
         cycle(data) {
-          const ndx = parseInt(data.name);
-          const newData = {...data};
-          delete newData.id;
-          delete newData.name;
-          model.setTestResult(ndx, newData, window.navigator.userAgent);
+          updateTestResults(data)
         },
         // benchmark onComplete
         complete(data) {
-          window.removeEventListener('message', handleMessage);
-          iframe.remove();
-          resolve(data);
+          cleanup();
+          resolve({success: true, data});
         },
       }
 

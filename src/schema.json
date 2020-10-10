@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+
+  "definitions": {
+    "results": {
+      "type": "object",
+      "properties": {
+        "aborted": { "type": "boolean" },
+        "count": { "type": "integer" },
+        "cycles": { "type": "integer" },
+        "hz": { "type": "number" },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "numSamples": { "type": "integer" },
+            "rme": { "type:": "number" }
+          },
+          "required": ["numSamples", "rme"]
+        },
+        "times": {"type": "object"}
+      }
+    }
+  },
+
+
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "setup": { "type": "string" },
+    "initialization": { "type": "string" },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "code": { "type": "string" },
+          "results": { "$ref": "#/definitions/results" },
+          "platforms": {
+            "type": "object",
+            "additionalProperties": { "$ref": "#/definitions/results" }
+          }
+        },
+        "required": ["name", "code", "results", "platforms"]
+      }
+    }
+  },
+  "required": ["title", "setup", "initialization", "tests"]
+}

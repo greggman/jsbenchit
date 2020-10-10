@@ -4,7 +4,10 @@ See [jsbenchit.org](https://jsbenchit.org)
 
 **(! still work-in-progress, not ready for use)**
 
-A JavaScript Perf Tester based on Github Gists
+A JavaScript Perf Tester based on Github Gists.
+It's your data!
+
+Also sse [jsgist.org](https://jsgist.org)
 
 ## Why? 
 

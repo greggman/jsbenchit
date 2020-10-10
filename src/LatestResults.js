@@ -5,7 +5,7 @@ export default function LatestResults(props) {
   const {tests} = props;
 
   return (
-    <div>
+    <div className="results">
       <div>Latest Results:</div>
       <Results tests={tests} />
     </div>

@@ -1,3 +1,8 @@
+import Ajv from 'ajv';
+import schema from './schema.json';
+
+const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
+const validator = ajv.compile(schema);
 const isDev = process.env.NODE_ENV === 'development';
 
 const trackedValues = {};
@@ -48,7 +53,7 @@ export function unsubscribe(name, fn) {
 
 const newTestData = {
   "title": "My Test",
-  "initialization": "// runs once",
+  "dinitialization": "// runs once",
   "setup": "// runs before each test",
   "tests": [
     {
@@ -100,29 +105,27 @@ export let data = isDev ? {
         }
       },
       "platforms": {
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36": [
-          {
-            "aborted": false,
-            "count": 3925,
-            "cycles": 6,
-            "hz": 48757.763975155285,
-            "stats": {
-              "numSamples": 45,
-              "moe": 1.3253034196794547e-7,
-              "rme": 0.6461883133219702,
-              "sem": 6.761752141221708e-8,
-              "deviation": 5.409401712977366e-7,
-              "mean": 0.000020509554140127386,
-              "variance": 2.926162689236246e-13
-            },
-            "times": {
-              "cycle": 0.08049999999999999,
-              "elapsed": 6.087,
-              "period": 0.000020509554140127386,
-              "timeStamp": 1602070187852
-            }
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36": {
+          "aborted": false,
+          "count": 3925,
+          "cycles": 6,
+          "hz": 48757.763975155285,
+          "stats": {
+            "numSamples": 45,
+            "moe": 1.3253034196794547e-7,
+            "rme": 0.6461883133219702,
+            "sem": 6.761752141221708e-8,
+            "deviation": 5.409401712977366e-7,
+            "mean": 0.000020509554140127386,
+            "variance": 2.926162689236246e-13
+          },
+          "times": {
+            "cycle": 0.08049999999999999,
+            "elapsed": 6.087,
+            "period": 0.000020509554140127386,
+            "timeStamp": 1602070187852
           }
-        ]
+        }
       }
     },
     {
@@ -150,34 +153,35 @@ export let data = isDev ? {
         }
       },
       "platforms": {
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36": [
-          null,
-          {
-            "aborted": false,
-            "count": 4467,
-            "cycles": 4,
-            "hz": 55738.7911907046,
-            "stats": {
-              "numSamples": 45,
-              "moe": 1.6987329815854215e-7,
-              "rme": 0.9468532294935285,
-              "sem": 8.667005008088886e-8,
-              "deviation": 6.879221958946363e-7,
-              "mean": 0.00001794082682164028,
-              "variance": 4.732369476044983e-13
-            },
-            "times": {
-              "cycle": 0.08014167341226712,
-              "elapsed": 5.979,
-              "period": 0.00001794082682164028,
-              "timeStamp": 1602070193946
-            }
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36": {
+          "aborted": false,
+          "count": 4467,
+          "cycles": 4,
+          "hz": 55738.7911907046,
+          "stats": {
+            "numSamples": 45,
+            "moe": 1.6987329815854215e-7,
+            "rme": 0.9468532294935285,
+            "sem": 8.667005008088886e-8,
+            "deviation": 6.879221958946363e-7,
+            "mean": 0.00001794082682164028,
+            "variance": 4.732369476044983e-13
+          },
+          "times": {
+            "cycle": 0.08014167341226712,
+            "elapsed": 5.979,
+            "period": 0.00001794082682164028,
+            "timeStamp": 1602070193946
           }
-        ]
+        }
       }
     }
   ]
 } : getNewTestData();
+
+if (!validator(data)) {
+  console.log(validator.errors);
+}
 
 add('dataVersion', 0);   // any data changes
 add('updateVersion', 0);  // all data changes
@@ -225,8 +229,8 @@ export function setTestCode(ndx, code) {
 export function setTestResult(ndx, results, platform) {
   const test = data.tests[ndx];
   test.results = results;
-  test.platforms[platform] = test.platforms[platform] || [];
-  test.platforms[platform][ndx] = results;
+  test.platforms[platform] = results;
+  notify();
 }
 
 export function deleteTest(ndx) {
@@ -234,8 +238,15 @@ export function deleteTest(ndx) {
   notify();
 }
 
+export function validate(data) {
+  if (!validator(data)) {
+    debugger;
+    throw new Error(`data not valid:\n${validator.errors.map(e => `${e.message}: ${e.dataPath}`)}`);
+  }
+}
+
 export function setData(newData) {
-  // TODO: Validate!
+  validate(newData);
   data = newData;
   notify();
   set('updateVersion', get('updateVersion') + 1);

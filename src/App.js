@@ -24,12 +24,15 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const noJSX = () => [];
+const stringOrEmpty = (str, prefix = '', suffix = '') => str ? `${prefix}${str}${suffix}` : '';
+const darkMatcher = window.matchMedia('(prefers-color-scheme: dark)');
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
       path: window.location.pathname,
+      dark: darkMatcher.matches,
       running: false,
       loading: false,
       dialog: noJSX,
@@ -41,24 +44,6 @@ class App extends React.Component {
     this.github = new GitHub();
   }
   componentDidMount() {
-    const query = Object.fromEntries(new URLSearchParams(window.location.search).entries());
-    const backup = localStorage.getItem('backup');
-    let loaded = false;
-    if (backup) {
-      try {
-        const data = JSON.parse(backup);
-        if (data.href === window.location.href) {
-          model.setData(data.data);
-          loaded = true;
-          this.addInfo('loaded backup from local storage')
-        }
-      } catch (e) {
-        //
-      }
-    }
-    if (!loaded && query.src) {
-      this.loadData(query.src);
-    }
     model.add('path', window.location.pathname);
     model.subscribe('path', (newValue) => {
       window.history.pushState({}, '', newValue);
@@ -90,6 +75,30 @@ class App extends React.Component {
     model.subscribe('updateVersion', (updateVersion) => {
       this.setState({updateVersion})
     });
+
+    darkMatcher.addEventListener('change', () => {
+      this.setState({dark: darkMatcher.matches});
+    });
+
+    const query = Object.fromEntries(new URLSearchParams(window.location.search).entries());
+    const backup = localStorage.getItem('backup');
+    let loaded = false;
+    if (backup) {
+      try {
+        const data = JSON.parse(backup);
+        if (data.href === window.location.href) {
+          model.setData(data.data);
+          loaded = true;
+          this.addInfo('loaded backup from local storage')
+        }
+      } catch (e) {
+        //
+      }
+      localStorage.removeItem('backup');
+    }
+    if (!loaded && query.src) {
+      this.loadData(query.src);
+    }
   }
   async loadData(src) {
     this.setState({loading: true});
@@ -97,6 +106,7 @@ class App extends React.Component {
       if (isGistId(src)) {
         const data = await this.github.getAnonGist(src);
         model.setData(data);
+        this.setState({gistId: src})
       } else if (isCompressedBase64(src)) {
         const data = compressedBase64ToJSON(src);
         model.setData(data);
@@ -107,7 +117,7 @@ class App extends React.Component {
       }
     } catch (e) {
       console.warn(e);
-      this.addError(`could not load benchmark: src=${src}`);
+      this.addError(`could not load benchmark: src=${src} ${e}`);
     }
     this.setState({loading: false});
   }
@@ -133,8 +143,14 @@ class App extends React.Component {
     }));
     console.log('--start--');
     const testRunner = new TestRunner();
-    const benches = await testRunner.run(model.data);
-    console.log(benches);
+    this.abort = testRunner.abort.bind(testRunner);
+    const {success, data} = await testRunner.run(model.data);
+    if (!success) {
+      this.addError(`could not run benchmark:\n${stringOrEmpty(data.message)}${stringOrEmpty(data.filename, ':')}${stringOrEmpty(data.lineno, ':')}${stringOrEmpty(data.colno, ':')}`);
+    }
+    this.abort = undefined;
+    localStorage.removeItem('backup');
+    console.log(data);
     console.log('--done--');
     this.setState({running: false});
   }
@@ -154,8 +170,11 @@ class App extends React.Component {
     window.history.pushState({}, '', `${window.location.origin}?src=${gistId}`);
     this.setState({dialog: noJSX, gistId});
   }
-  renderHelp() {
-    return (<Help />);
+  handleAbort = () => {
+    this.abort();
+  };
+  renderHelp = () => {
+    return (<Help onClose={this.closeDialog} />);
   }
   renderLoad = () => {
     return (
@@ -186,6 +205,7 @@ class App extends React.Component {
     const hideStyle = {
       ...(!running && {display: 'none'}),
     };
+    const disabledClass = classNames({disabled});
     return (
       <div className="App">
         <div className="head">
@@ -203,12 +223,15 @@ class App extends React.Component {
           <div className={classNames("left", {disabled})}>
             <EditLine value={data.title} onChange={v => model.setTitle(v)} />
           </div>
-          <div className={classNames("right", {disabled})}>
-            <button tabIndex="1" onClick={this.handleRun}>Run</button>
-            <button tabIndex="1" onClick={this.handleSave}>Save</button>
-            <button tabIndex="1" onClick={this.handleNew}>New</button>
-            <button tabIndex="1" onClick={this.handleLoad}>Load</button>
-            <button tabIndex="1" onClick={this.handleHelp}>?</button>
+          <div className="right">
+            { running
+                ? <button tabIndex="1" onClick={this.handleAbort}>Cancel</button>
+                : <button tabIndex="1" onClick={this.handleRun}>Run</button>
+            }
+            <button tabIndex="1" className={disabledClass} onClick={this.handleSave}>Save</button>
+            <button tabIndex="1" className={disabledClass} onClick={this.handleNew}>New</button>
+            <button tabIndex="1" className={disabledClass} onClick={this.handleLoad}>Load</button>
+            <button tabIndex="1" className={disabledClass} onClick={this.handleHelp}>?</button>
           </div>
         </div>
         {
@@ -251,10 +274,12 @@ class App extends React.Component {
                 }
                 <div>
                   <button onClick={model.addTest}>+</button>
-                  <div>foo</div>
-                  <div>bar</div>
                 </div>
-                <div className="blocked" style={hideStyle} />
+                <div className="blocked" style={hideStyle}>
+                  <div className="abort">
+                    <button onClick={this.handleAbort}>Stop Benchmark</button>
+                  </div>
+                </div>
               </div>
               <div className="right">
                 <LatestResults tests={data.tests}/>
