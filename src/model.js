@@ -53,7 +53,7 @@ export function unsubscribe(name, fn) {
 
 const newTestData = {
   "title": "My Test",
-  "dinitialization": "// runs once",
+  "initialization": "// runs once",
   "setup": "// runs before each test",
   "tests": [
     {
