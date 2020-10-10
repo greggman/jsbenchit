@@ -211,7 +211,7 @@ class App extends React.Component {
         <div className="head">
           <div>
             <img src="/resources/images/logo.svg" alt="logo"/>
-          jsBenchIt.org
+          jsBenchIt.org<span class="beta">(beta)</span>
           </div>
           <div>
           <a href="https://github.com/greggman/jsbenchit/">

@@ -31,6 +31,12 @@ html {
   vertical-align: middle;
   margin: 5px;
 }
+.head .beta {
+  font-size: x-small;
+  vertical-align: top;
+  position: relative;
+  right: 1em;
+}
 a {
   color: var(--link-color);
 }
