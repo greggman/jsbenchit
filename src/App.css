@@ -12,6 +12,8 @@ html {
   box-sizing: border-box;
   font-family: sans-serif;
   line-height: 1.5;
+  background: var(--main-bg-color);
+  color: var(--main-fg-color);
 }
 *, *:before, *:after {
   box-sizing: inherit;
@@ -39,10 +41,6 @@ html {
 }
 a {
   color: var(--link-color);
-}
-.App {
-  background: var(--main-bg-color);
-  color: var(--main-fg-color);
 }
 .blocked {
   position: absolute;
@@ -152,12 +150,38 @@ a {
   display: flex;
 }
 .left {
-  width: 50%;
   position: relative;
 }
-.right {
-  margin-left: 10px;
+/* -------------- */
+.split {
+  width: 100%;
 }
+.split, .gutter.gutter-horizontal {
+    float: left;
+}
+.gutter {
+    background-color: var(--main-bg-color);
+}
+.gutter.gutter-horizontal,
+.gutter.gutter-horizontal:hover {
+    cursor: ew-resize;
+}
+.gutter.gutter-vertical,
+.gutter.gutter-vertical:hover {
+    cursor: ns-resize;
+}
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+}
+/* ------------ */
 .messages {
   position: fixed;
   bottom: 0;
@@ -261,6 +285,7 @@ input[type="password"] {
 .result-info {
   position: relative;
   z-index: 2;
+  overflow: hidden;
 }
 .result-name {
   background: rgba(0,0,0,0.2);

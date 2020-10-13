@@ -10,6 +10,7 @@ import * as model from './model.js';
 import NamedCodeArea from './NamedCodeArea.js';
 import Platforms from './Platforms.js';
 import Save from './Save.js';
+import Split from './Split.js';
 import TestArea from './TestArea.js';
 import TestRunner from './TestRunner.js';
 import {isCompressedBase64, compressedBase64ToJSON} from './SaveAsURL.js';
@@ -253,54 +254,56 @@ class App extends React.Component {
         {
           loading ? [] : (
             <div className="bottom">
-              <div className="left">
-                <NamedCodeArea
-                  hackKey={hackKey}
-                  title="Initialization"
-                  value={data.initialization}
-                  show={data.initialization.length > 0}
-                  onValueChange={v => model.setInitialization(v)}
-                />
-                <NamedCodeArea
-                  hackKey={hackKey}
-                  title="Before Each Test"
-                  value={data.setup}
-                  show={data.setup.length > 0}
-                  onValueChange={v => model.setSetup(v)}
-                 />
-                {
-                  data.tests.map((test, ndx) => {
-                    const extra = (
-                      <div><button onClick={_ => model.deleteTest(ndx)}>-</button></div>
-                    );
-                    return (
-                      <TestArea
-                        key={`ca${ndx}`}
-                        hackKey={hackKey}
-                        desc={`Case ${ndx + 1}`}
-                        title={test.name}
-                        value={test.code}
-                        async={test.async}
-                        onTitleChange={title => model.setTestName(ndx, title)}
-                        onValueChange={value => model.setTestCode(ndx, value)}
-                        extra={extra}
-                      />
-                    );
-                  })
-                }
-                <div>
-                  <button onClick={model.addTest}>+</button>
-                </div>
-                <div className="blocked" style={hideStyle}>
-                  <div className="abort">
-                    <button onClick={this.handleAbort}>Stop Benchmark</button>
+              <Split direction="horizontal">
+                <div className="left">
+                  <NamedCodeArea
+                    hackKey={hackKey}
+                    title="Initialization"
+                    value={data.initialization}
+                    show={data.initialization.length > 0}
+                    onValueChange={v => model.setInitialization(v)}
+                  />
+                  <NamedCodeArea
+                    hackKey={hackKey}
+                    title="Before Each Test"
+                    value={data.setup}
+                    show={data.setup.length > 0}
+                    onValueChange={v => model.setSetup(v)}
+                   />
+                  {
+                    data.tests.map((test, ndx) => {
+                      const extra = (
+                        <div><button onClick={_ => model.deleteTest(ndx)}>-</button></div>
+                      );
+                      return (
+                        <TestArea
+                          key={`ca${ndx}`}
+                          hackKey={hackKey}
+                          desc={`Case ${ndx + 1}`}
+                          title={test.name}
+                          value={test.code}
+                          async={test.async}
+                          onTitleChange={title => model.setTestName(ndx, title)}
+                          onValueChange={value => model.setTestCode(ndx, value)}
+                          extra={extra}
+                        />
+                      );
+                    })
+                  }
+                  <div>
+                    <button onClick={model.addTest}>+</button>
+                  </div>
+                  <div className="blocked" style={hideStyle}>
+                    <div className="abort">
+                      <button onClick={this.handleAbort}>Stop Benchmark</button>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="right">
-                <LatestResults tests={data.tests}/>
-                <Platforms tests={data.tests}/>
-              </div>
+                <div className="right">
+                  <LatestResults tests={data.tests}/>
+                  <Platforms tests={data.tests}/>
+                </div>
+              </Split>
             </div>
           )
         }
