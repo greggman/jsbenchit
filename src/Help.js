@@ -5,7 +5,8 @@ export default function Help(props) {
   const {onClose} = props;
   return (
     <Dialog title="jsBenchIt" onClose={onClose}>
-      <p>Add your test cases, click --Run--.</p>
+      <div className="markdown">
+      <p>Add your test cases, click <code>Run</code>.</p>
       <h2>Contribute, Fix, Enhance!</h2>
       <p>
         <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit">https://github.com/greggman/jsbenchit</a>
@@ -81,6 +82,7 @@ export default function Help(props) {
     <p>Repeat steps 4, 5, 6 on other browsers.</p>
     <p>Note: In general it only makes sense to compare results of browsers
        on the same machine.</p>
+    </div>
     </Dialog>
   );
 }

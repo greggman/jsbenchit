@@ -40,10 +40,16 @@ class App extends React.Component {
       gistId: '',
       pat: localStorage.getItem('pat'),
       messages: [],
+      userData: {},
     };
     this.github = new GitHub();
   }
   componentDidMount() {
+    this.github.addEventListener('userdata', (e) => {
+      this.setState({
+        userData: e.data,
+      });
+    });
     model.add('path', window.location.pathname);
     model.subscribe('path', (newValue) => {
       window.history.pushState({}, '', newValue);
@@ -168,7 +174,7 @@ class App extends React.Component {
   }
   handleOnSave = (gistId) => {
     window.history.pushState({}, '', `${window.location.origin}?src=${gistId}`);
-    this.setState({dialog: noJSX, gistId});
+    this.setState({gistId});
   }
   handleAbort = () => {
     this.abort();
@@ -200,7 +206,13 @@ class App extends React.Component {
   }
   render() {
     const data = model.data;
-    const {running, loading, dialog, updateVersion: hackKey} = this.state;
+    const {
+      running,
+      loading,
+      dialog,
+      updateVersion: hackKey,
+      userData,
+    } = this.state;
     const disabled = running;
     const hideStyle = {
       ...(!running && {display: 'none'}),
@@ -211,7 +223,7 @@ class App extends React.Component {
         <div className="head">
           <div>
             <img src="/resources/images/logo.svg" alt="logo"/>
-          jsBenchIt.org<span class="beta">(beta)</span>
+          jsBenchIt.org<span className="beta">(beta)</span>
           </div>
           <div>
           <a href="https://github.com/greggman/jsbenchit/">
@@ -221,7 +233,11 @@ class App extends React.Component {
         </div>
         <div className="top">
           <div className={classNames("left", {disabled})}>
-            <EditLine value={data.title} onChange={v => model.setTitle(v)} />
+            <div className="name">
+              <EditLine value={data.title} onChange={v => model.setTitle(v)} />
+              <div className="username"><a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}>{userData.name}</a></div>
+              {userData.avatarURL ? <a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}><img className="avatar" src={userData.avatarURL} alt="avatar"/></a> : []}
+            </div>
           </div>
           <div className="right">
             { running

@@ -182,7 +182,21 @@ input {
   background: var(--title-bg-color);
   color: var(--main-fg-color);
 }
-
+.name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.name > * + * {
+  margin-left: 10px;
+}
+.name>*:nth-child(1) {
+  flex: 1 1 auto;
+}
+.avatar {
+  height: 2em;
+}
 input[type="text"],
 input[type="password"] {
   outline: none;
