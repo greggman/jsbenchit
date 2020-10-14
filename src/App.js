@@ -166,7 +166,6 @@ class App extends React.Component {
     }
     this.abort = undefined;
     localStorage.removeItem(backupKey);
-    console.log(data);
     console.log('--done--');
     this.setState({running: false});
   }
