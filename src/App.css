@@ -355,6 +355,26 @@ button:hover {
   text-align: right;
 }
 
+.comment-notes {
+  padding: 1em;
+  margin: 1em;
+  background: rgba(255, 255, 255, 0.5);
+  color: red;
+}
+.comments,
+.comment-sep {
+    margin: 0 auto 1em;
+    max-width: 700px;
+    width: calc(100% - 40px);
+}
+.comments iframe {
+  width: 100%;
+  border: none;
+}
+.comments .links {
+  text-align: center;
+}
+
 @media (max-width: 740px) {
   .top,
   .bottom {
@@ -382,6 +402,9 @@ button:hover {
   .CodeMirror-overlayscroll-horizontal div,
   .CodeMirror-overlayscroll-vertical div {
     opacity: 0.3;
+  }
+  .comment-notes {
+    background: rgba(0, 0, 0, 0.5);
   }
   .gists {
     background-color: rgba(0, 0, 0, 0.3);

@@ -2,10 +2,12 @@ import React from 'react';
 
 import { classNames } from './css-utils.js';
 import EditLine from './EditLine.js';
+import Footer from './Footer.js';
 import GitHub from './GitHub.js';
 import Help from './Help.js';
 import LatestResults from './LatestResults.js';
 import Load from './Load.js';
+import {loadGistFromSrc} from './loader.js';
 import * as model from './model.js';
 import NamedCodeArea from './NamedCodeArea.js';
 import Platforms from './Platforms.js';
@@ -13,20 +15,25 @@ import Save from './Save.js';
 import Split from './Split.js';
 import TestArea from './TestArea.js';
 import TestRunner from './TestRunner.js';
-import {isCompressedBase64, compressedBase64ToJSON} from './SaveAsURL.js';
 
 import './App.css';
-
-const idRE = /^[a-z0-9]+$/i;
-const isGistId = s => idRE.test(s);
 
 if (process.env.NODE_ENV === 'development') {
   window.d = model.data;
 }
 
+const backupKey = 'jsBenchIt-backup';
 const noJSX = () => [];
 const stringOrEmpty = (str, prefix = '', suffix = '') => str ? `${prefix}${str}${suffix}` : '';
 const darkMatcher = window.matchMedia('(prefers-color-scheme: dark)');
+const makeDisqusId = () => {
+  const loc = window.location;
+  const query = Object.fromEntries(new URLSearchParams(loc.search).entries());
+  const src = query.src;
+  return src
+      ? `${encodeURIComponent(src)}`
+      : '';
+}
 
 class App extends React.Component {
   constructor() {
@@ -34,6 +41,7 @@ class App extends React.Component {
     this.state = {
       path: window.location.pathname,
       dark: darkMatcher.matches,
+      disqusId: makeDisqusId(),
       running: false,
       loading: false,
       dialog: noJSX,
@@ -88,7 +96,7 @@ class App extends React.Component {
     });
 
     const query = Object.fromEntries(new URLSearchParams(window.location.search).entries());
-    const backup = localStorage.getItem('backup');
+    const backup = localStorage.getItem(backupKey);
     let loaded = false;
     if (backup) {
       try {
@@ -101,7 +109,7 @@ class App extends React.Component {
       } catch (e) {
         //
       }
-      localStorage.removeItem('backup');
+      localStorage.removeItem(backupKey);
     }
     if (!loaded && query.src) {
       this.loadData(query.src);
@@ -110,17 +118,10 @@ class App extends React.Component {
   async loadData(src) {
     this.setState({loading: true});
     try {
-      if (isGistId(src)) {
-        const data = await this.github.getAnonGist(src);
-        model.setData(data);
+      const {data, id} = await loadGistFromSrc(src, this.github);
+      model.setData(data);
+      if (id) {
         this.setState({gistId: src})
-      } else if (isCompressedBase64(src)) {
-        const data = compressedBase64ToJSON(src);
-        model.setData(data);
-      } else {
-        const res = await fetch(src);
-        const data = await res.json();
-        model.setData(data);
       }
     } catch (e) {
       console.warn(e);
@@ -129,6 +130,14 @@ class App extends React.Component {
     this.setState({loading: false});
   }
   addMsg = (msg, className) => {
+    switch (className) {
+      case 'error':
+        console.error(msg);
+        break;
+      default:
+        console.log(msg);
+        break;
+    }
     this.setState({messages: [{msg, className}, ...this.state.messages]});
     setTimeout(() => {
       this.setState({messages: this.state.messages.slice(0, this.state.messages.length - 1)});
@@ -144,7 +153,7 @@ class App extends React.Component {
   }
   handleRun = async () => {
     this.setState({running: true});
-    localStorage.setItem('backup', JSON.stringify({
+    localStorage.setItem(backupKey, JSON.stringify({
       href: window.location.href,
       data: model.data,
     }));
@@ -156,7 +165,7 @@ class App extends React.Component {
       this.addError(`could not run benchmark:\n${stringOrEmpty(data.message)}${stringOrEmpty(data.filename, ':')}${stringOrEmpty(data.lineno, ':')}${stringOrEmpty(data.colno, ':')}`);
     }
     this.abort = undefined;
-    localStorage.removeItem('backup');
+    localStorage.removeItem(backupKey);
     console.log(data);
     console.log('--done--');
     this.setState({running: false});
@@ -307,6 +316,10 @@ class App extends React.Component {
             </div>
           )
         }
+        <Footer
+          disqusId={makeDisqusId()}
+          title={data.title}
+        />
         {dialog()}
         <div className="messages">
           {

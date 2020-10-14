@@ -39,16 +39,15 @@ export default class GitHub extends EventTarget {
     return gists.filter(gist => !!gist.files['jsBenchIt.json']);
     // return await this.authorizedOctokit.gists.list();
   }
+  async getAnonGist(gist_id) {
+    const {data, rawData} = await getAnonGist(gist_id);
+    this._updateUserData(rawData);
+    return {data, rawData};
+  }
   async getUserGist(gist_id) {
     const gist = await this.octokit.gists.get({gist_id});
     this._updateUserData(gist.data);
     return getGistContent(gist.data);
-  }
-  async getAnonGist(gist_id) {
-    const req = await fetch(`https://api.github.com/gists/${gist_id}`);
-    const gist = await req.json();
-    this._updateUserData(gist);
-    return getGistContent(gist);
   }
   async createGist(data) {
     const gist = await this.authorizedOctokit.gists.create({
@@ -59,7 +58,11 @@ export default class GitHub extends EventTarget {
       },
     });
     this._updateUserData(gist.data);
-    return gist.data.id;
+    return {
+      id: gist.data.id,
+      name: gist.data.description,
+      date: gist.data.updated_at,
+    };
   }
   /* returns 
 {status: 201, url: "https://api.github.com/gists", headers: {…}, data: {…}}
@@ -89,7 +92,7 @@ status: 201
 url: "https://api.github.com/gists"
   */
   async updateGist(gist_id, data, isPublic = true) {
-    return await this.authorizedOctokit.gists.update({
+    const gist = await this.authorizedOctokit.gists.update({
       gist_id,
       description: data.title,
       public: isPublic,
@@ -97,5 +100,19 @@ url: "https://api.github.com/gists"
         'jsBenchIt.json': JSON.stringify(data),
       },
     });
+    return {
+      id: gist.data.id,
+      name: gist.data.description,
+      date: gist.data.updated_at,
+    };
   }
+}
+
+export async function getAnonGist(gist_id) {
+  const req = await fetch(`https://api.github.com/gists/${gist_id}`);
+  const gist = await req.json();
+  return {
+    data: getGistContent(gist),
+    rawData: gist,
+  };
 }
