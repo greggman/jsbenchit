@@ -7,6 +7,7 @@ export default function Help(props) {
     <Dialog title="jsBenchIt" onClose={onClose}>
       <div className="markdown">
       <p>Add your test cases, click <code>Run</code>.</p>
+      <p><a target="_blank" rel="noopener noreferrer" href="https://jsbenchit.org/?src=d401d49caa9e9295a026bbaee70fee3b">Click here for an example</a>.</p>
       <h2>Contribute, Fix, Enhance!</h2>
       <p>
         <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit">https://github.com/greggman/jsbenchit</a>
@@ -15,13 +16,15 @@ export default function Help(props) {
       <h2>Saving</h2>
       <p>You can save your tests in multiple ways.</p>
       <ol>
-        <li>To a github gist using a <a target="_blank" rel="noopener noreferrer" href="https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token">Personal Access Token</a>
+        <li>To a github gist using a <a target="_blank" rel="noopener noreferrer" href="https://github.com/settings/tokens">Personal Access Token</a>
           <p>
            Be sure to give the token <b>ONLY GIST</b> permissions. Paste it into the
            save as UI click <code>Save to new gist</code>. Be sure to keep a copy of it
            somewhere so you can use if you clear your browser's storage or switch
            machines or browser. This site is a static site. The token is saved
-           in the browser only.
+           in the browser only. You should also be able to save it in your browser's 
+           password manager though you might have to click the key icon to tell it to save it.
+           The username will appear as "unused" since it's not actually used.
           </p>
         </li>
         <li>Save it manually into github
@@ -33,10 +36,10 @@ export default function Help(props) {
            Note the id in the URL after you create the gist.
           </p>
           <p>
-           Create a url in the form <code>https://jsbenchit.org/?src=&lt;gist_id&gt;--</code>.
+           Create a url in the form <code>https://jsbenchit.org/?src=&lt;gist_id&gt;</code>.
           </p>
           <p>
-           Example: <a target="_blank" rel="noopener noreferrer" href="https://jsbenchit.org/?src=524016d2dd0fb3de37c8c8dac8e1c35b">https://jsbenchit.org/?src=524016d2dd0fb3de37c8c8dac8e1c35b</a>
+           Example: <a target="_blank" rel="noopener noreferrer" href="https://jsbenchit.org/?src=d401d49caa9e9295a026bbaee70fee3b">https://jsbenchit.org/?src=d401d49caa9e9295a026bbaee70fee3b</a>
           </p>
         </li>
         <li>Save it manually somewhere else.
