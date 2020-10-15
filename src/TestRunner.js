@@ -24,6 +24,25 @@ export default class TestRunner {
       </body>
       <${'script'} type="module" src="${base}/runner.js"></${'script'}>
       `;
+
+      const runnerData = {
+        name: data.title,
+        files: [
+          {
+            name: 'html',
+            content: html,
+          },
+          {
+            name: 'css',
+            content: '',
+          },
+          {
+            name: 'javascript',
+            content: '',
+          },
+        ],
+      }
+
       const iframe = document.createElement('iframe');
       model.clearAllTestResults();
 
@@ -71,16 +90,25 @@ export default class TestRunner {
           cleanup();
           resolve({success: true, data});
         },
-      }
+        gimmeDaCodez: () => {
+          iframe.contentWindow.postMessage({
+            type: 'run',
+            data: runnerData,
+          }, "*");
+        },
+      };
 
       const handleMessage = (e) => {
         const {type, data} =  e.data;
-        handlers[type](data);
+        const fn = handlers[type];
+        if (fn) {
+          fn(data);
+        } else {
+          console.error('unknown code', e.data);
+        }
       };
       window.addEventListener('message', handleMessage);
-      const blob = new Blob([html], {type: 'text/html'});
-      iframe.sandbox = 'allow-scripts';
-      iframe.src = URL.createObjectURL(blob);
+      iframe.src = 'https://jsbenchitrunner.devcomments.org/runner.html';
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
     });
