@@ -17,6 +17,12 @@ In any case this is open source so contributions welcome.
 
 ## TODO
 
+- [ ] Support async tests?
+
+  The simplest way would just be if the code to returns a promise it's async.
+  What's a good example of an async test though? Maybe testing
+  passing data to a worker and back?
+
 - [ ] support github login instead of using personal access tokens?
 
    I didn't do that originally because there is no way to login
@@ -26,7 +32,7 @@ In any case this is open source so contributions welcome.
    
 - [ ] mobile formatting
 
-   I have't really bothered with mobile formatting other than
+   I haven't really bothered with mobile formatting other than
    checking that it seems to run and not be too messed up.
 
 ## License: [MIT](LICENSE.md)
