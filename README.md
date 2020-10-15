@@ -5,7 +5,7 @@ See [jsbenchit.org](https://jsbenchit.org)
 A JavaScript Perf Tester based on Github Gists.
 It's your data!
 
-Also sse [jsgist.org](https://jsgist.org)
+Also see [jsgist.org](https://jsgist.org)
 
 ## Why? 
 
