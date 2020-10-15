@@ -11,7 +11,6 @@ export default class SaveAsGist extends React.Component {
       saving: false,
       pat: localStorage.getItem('pat') || '',
     };
-    this.formRef = React.createRef();
   }
   handlePATChange = (e) => {
     const pat = e.target.value;
@@ -32,14 +31,6 @@ export default class SaveAsGist extends React.Component {
   }
   markToUpdateGist =  () => {
     this.saveFn = this.saveOverExisting;
-  }
-  componentDidMount() {
-    this.formRef.current.addEventListener('submit', this.handleSubmit);
-    //document.body.addEventListener('submit', this.handleSubmit);
-  }
-  componentWillUnmount() {
-    this.formRef.current.removeEventListener('submit', this.handleSubmit);
-    //document.body.removeEventListener('submit', this.handleSubmit);
   }
   saveNew = async() => {
     this.setState({saving: true});
@@ -89,7 +80,7 @@ export default class SaveAsGist extends React.Component {
     const canSave = pat && gistId;
     return (
       <div>
-        <form ref={this.formRef} onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit}>
           <div className="save-as-gist-pat">
             <div>Personal Access Token:&nbsp;</div>
             <div>
