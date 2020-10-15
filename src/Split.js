@@ -26,6 +26,8 @@ function normalizeSizes(sizes) {
   return sizes.map(v => v / totalSize);
 }
 
+const getMouseOrTouchPosition = (e, clientAxis) => e.touches ? e.touches[0][clientAxis] : e[clientAxis];
+
 function addSpaceForChildren(sizes, numChildren, gutterSize, minSizePX, totalSizePX) {
   // const numGutters = numChildren - 1;
   // const totalGutterSpacePX = numGutters * gutterSize;
@@ -61,9 +63,6 @@ const getDirectionProps = direction => (direction === 'horizontal')
         width: '100%',
         display: 'flex',
       },
-      wrapperStyle: {
-        height: '100%',
-      },
     }
   : {
       dimension: 'height',
@@ -71,10 +70,7 @@ const getDirectionProps = direction => (direction === 'horizontal')
       position: 'top',
       positionEnd: 'bottom',
       clientSize: 'clientHeight',
-      style: { height: '100%' },
-      wrapperStyle: {
-        height: '100%',
-      },
+      style: { /*height: '100%'*/ },
     };
 
 function computeNewSizes({
@@ -127,6 +123,42 @@ function computeNewSizes({
   return newSizes;
 }
 
+const stopMobileBrowserFromScrolling = e => e.preventDefault();
+
+class Gutter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.elementRef = React.createRef();
+  }
+  handleMouseDownAndTouchStart = (e) => {
+    const {onMouseDownAndTouchStart} = this.props;
+    onMouseDownAndTouchStart(e);
+  }
+  componentDidMount() {
+    // There's no way in React 16 to add passive false event listeners
+    // which means there is no way to drag a splitter and prevent mobile browsers
+    // from scrolling
+    const elem = this.elementRef.current;
+    elem.addEventListener('mousedown', this.handleMouseDownAndTouchStart, {passive: false});
+    elem.addEventListener('touchstart', this.handleMouseDownAndTouchStart, {passive: false});
+  }
+  componentWillUnmount() {
+    const elem = this.elementRef.current;
+    elem.removeEventListener('mousedown', this.handleMouseDownAndTouchStart);
+    elem.removeEventListener('touchstart', this.handleMouseDownAndTouchStart);
+  }
+  render() {
+    const {direction, dragging, current, style} = this.props;
+    return (
+      <div
+        ref={this.elementRef}
+        className={`gutter gutter-${direction} ${dragging && current ? 'gutter-dragging' : ''}`}
+        style={style}
+      />
+    );
+  }
+}
+
 export default class GManSplit extends React.Component {
   constructor(props) {
     super(props);
@@ -140,12 +172,15 @@ export default class GManSplit extends React.Component {
   _setSizes = (sizes) => {
     this.setState({sizes});
   }
-  handleMouseUp = () => {
-    document.removeEventListener("mousemove", this.handleMouseMove);
-    document.removeEventListener("mouseup", this.handleMouseUp);
+  handleMouseUpAndTouchEnd = () => {
+    document.removeEventListener("mousemove", this.handleMouseAndTouchMove);
+    document.removeEventListener("mouseup", this.handleMouseUpAndTouchEnd);
+    document.removeEventListener("touchmove", this.handleMouseAndTouchMove);
+    document.removeEventListener("touchend", this.handleMouseUpAndTouchEnd);
     this.setState({dragging: false});
   };
-  handleMouseMove = (e) => {
+  handleMouseAndTouchMove = (e) => {
+    stopMobileBrowserFromScrolling(e);
     const {
       gutterSize = defaultGutterSize,
       direction = defaultDirection,
@@ -168,7 +203,7 @@ export default class GManSplit extends React.Component {
       clientSize,
     } = getDirectionProps(direction);
 
-    const deltaPX = e[clientAxis] - mouseStart;
+    const deltaPX = getMouseOrTouchPosition(e, clientAxis) - mouseStart;
     const outerSizePX = this.elementRef.current[clientSize];
 
     const newSizes = computeNewSizesFn({
@@ -183,7 +218,9 @@ export default class GManSplit extends React.Component {
 
     setSizes(newSizes);
   };
-  handleMouseDown = (e) => {
+  handleMouseDownAndTouchStart = (e) => {
+    console.log('split mouse down')
+    stopMobileBrowserFromScrolling(e);
     const {
       direction = defaultDirection,
     } = this.props;
@@ -191,13 +228,15 @@ export default class GManSplit extends React.Component {
       clientAxis,
     } = getDirectionProps(direction);
 
-    document.addEventListener("mousemove", this.handleMouseMove);
-    document.addEventListener("mouseup", this.handleMouseUp);
+    document.addEventListener("mousemove", this.handleMouseAndTouchMove, {passive: false});
+    document.addEventListener("mouseup", this.handleMouseUpAndTouchEnd);
+    document.addEventListener("touchmove", this.handleMouseAndTouchMove, {passive: false});
+    document.addEventListener("touchend", this.handleMouseUpAndTouchEnd);
     const gutterNdx = Array.prototype.indexOf.call(e.target.parentElement.children, e.target);
     const prevPaneNdx = (gutterNdx - 1) / 2;    
     this.setState({
       startSizes: this.state.sizes.slice(),
-      mouseStart: e[clientAxis],
+      mouseStart: getMouseOrTouchPosition(e, clientAxis),
       prevPaneNdx,
       dragging: true,
     });
@@ -274,7 +313,6 @@ export default class GManSplit extends React.Component {
     const {
       dimension,
       style,
-      wrapperStyle,
     } = getDirectionProps(direction);
 
     const sizes = onSetSizes ? propSizes : stateSizes;
@@ -293,17 +331,18 @@ export default class GManSplit extends React.Component {
       }
       if (!first) {
         newChildren.push(
-          <div
+          <Gutter
             key={`gutter${newChildren.length}`}
-            className={`gutter gutter-${direction} ${dragging && childNdx === prevPaneNdx + 1 ? 'gutter-dragging' : ''}`}
+            direction={direction}
+            dragging={dragging}
+            current={dragging && childNdx === prevPaneNdx + 1}
             style={gutterStyle}
-            onMouseDown={this.handleMouseDown}
+            onMouseDownAndTouchStart={this.handleMouseDownAndTouchStart}
           />
         );
       }
 
       const style = {
-        ...wrapperStyle,
         [dimension]: `calc(${sizes[childNdx] * 100}% - ${gutterReservedSizes[childNdx]}px)`,
       };
 
@@ -327,6 +366,13 @@ export default class GManSplit extends React.Component {
         {...rest}
       >
         {newChildren}
+        {dragging ? 
+          <style>
+            iframe {'{'}
+              pointer-events: none !important;
+            {'}'}
+          </style> : []
+        }
       </div>
     );
   }

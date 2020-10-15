@@ -15,7 +15,9 @@ export default function CodeArea(props) {
         </div>
         <div className={classNames("hidee", {hideeHide})}>
           <Resizable
-            style={{background: 'red', position: 'relative'}}
+            handleClasses={{bottom: "resize-handle-horizontal"}}
+            handleStyles={{bottom: {bottom: '0px', position: 'initial'}}}
+            style={{position: 'relative'}}
             defaultSize={{height: 200}}
             minHeight={20}
             enable={{top:false, right:false, bottom:true, left:false, topRight:false, bottomRight:false, bottomLeft:false, topLeft:false}}
