@@ -139,7 +139,7 @@ a {
 .top,
 .bottom {
   display: flex;
-  padding: 10px;
+  padding: 10px 10px 0 10px;
   position: relative;
 }
 .top>div,
@@ -378,11 +378,17 @@ button:hover {
 .comments .links {
   text-align: center;
 }
+hr {
+  border: none;
+  background: var(--title-bg-color);
+  height: 2px;
+}
 
 @media (max-width: 740px) {
   .top,
   .bottom {
     flex-direction: column;
+    padding-top: 5px;
   }
   .left {
     width: 100%;
@@ -390,6 +396,17 @@ button:hover {
   .right {
     margin-left: 0;
   }
+  .top .right {
+    padding-top: 5px;
+  }
+ .head {
+    font-size: medium;
+    padding: 5px 10px 5px 10px;
+  }
+  .head .beta {
+    font-size: xx-small;
+  }
+
 }
 
 @media (prefers-color-scheme: dark) {
