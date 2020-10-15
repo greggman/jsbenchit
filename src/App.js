@@ -235,7 +235,7 @@ class App extends React.Component {
           jsBenchIt.org<span className="beta">(beta)</span>
           </div>
           <div>
-          <a href="https://github.com/greggman/jsbenchit/">
+          <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/">
             <img alt="github" src="/resources/images/octocat-icon.svg"/>
           </a>
           </div>
