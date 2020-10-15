@@ -148,6 +148,7 @@ a {
 }
 .top .right {
   display: flex;
+  margin-left: 10px;
 }
 .left {
   position: relative;
@@ -398,6 +399,7 @@ hr {
   }
   .top .right {
     padding-top: 5px;
+    margin-left: 0;
   }
  .head {
     font-size: medium;
