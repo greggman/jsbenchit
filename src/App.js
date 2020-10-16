@@ -158,11 +158,15 @@ class App extends React.Component {
       data: model.data,
     }));
     console.log('--start--');
-    const testRunner = new TestRunner();
-    this.abort = testRunner.abort.bind(testRunner);
-    const {success, data} = await testRunner.run(model.data);
-    if (!success) {
-      this.addError(`could not run benchmark:\n${stringOrEmpty(data.message)}${stringOrEmpty(data.filename, ':')}${stringOrEmpty(data.lineno, ':')}${stringOrEmpty(data.colno, ':')}`);
+    try {
+      const testRunner = new TestRunner();
+      this.abort = testRunner.abort.bind(testRunner);
+      const {success, data} = await testRunner.run(model.data);
+      if (!success) {
+        this.addError(`could not run benchmark:\n${stringOrEmpty(data?.message)}${stringOrEmpty(data?.filename, ':')}${stringOrEmpty(data?.lineno, ':')}${stringOrEmpty(data?.colno, ':')}`);
+      }
+    } catch(e) {
+      this.addError(e);
     }
     this.abort = undefined;
     localStorage.removeItem(backupKey);
