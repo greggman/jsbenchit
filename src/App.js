@@ -50,6 +50,7 @@ class App extends React.Component {
       pat: localStorage.getItem('pat'),
       messages: [],
       userData: {},
+      testNum: 0,
     };
     this.github = new GitHub();
   }
@@ -152,7 +153,7 @@ class App extends React.Component {
     model.setData(model.getNewTestData());
   }
   handleRun = async () => {
-    this.setState({running: true});
+    this.setState({running: true, testNum: 0});
     localStorage.setItem(backupKey, JSON.stringify({
       href: window.location.href,
       data: model.data,
@@ -160,6 +161,9 @@ class App extends React.Component {
     console.log('--start--');
     try {
       const testRunner = new TestRunner();
+      testRunner.addEventListener('progress', (e) => {
+        this.setState({testNum: e.data.testNdx + 1});
+      });
       this.abort = testRunner.abort.bind(testRunner);
       const {success, data} = await testRunner.run(model.data);
       if (!success) {
@@ -225,6 +229,7 @@ class App extends React.Component {
       dialog,
       updateVersion: hackKey,
       userData,
+      testNum,
     } = this.state;
     const disabled = running;
     const hideStyle = {
@@ -307,7 +312,9 @@ class App extends React.Component {
                   </div>
                   <div className="blocked" style={hideStyle}>
                     <div className="abort">
-                      <button onClick={this.handleAbort}>Stop Benchmark</button>
+                      <div>Testing {testNum + 1} of {data.tests.length}</div>
+                      <div>Time remaining: ~{(data.tests.length - testNum) * 5}s</div>
+                      <div><button onClick={this.handleAbort}>Stop Benchmark</button></div>
                     </div>
                   </div>
                 </div>

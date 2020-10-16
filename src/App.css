@@ -52,7 +52,16 @@ a {
   z-index: 100;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+}
+.abort {
+  margin-top: 3em;
+  text-align: center;
+  background: var(--main-bg-color);
+  padding: 1em;
+}
+.abort button {
+  margin-top: 1em;
 }
 .dialog {
   position: fixed;

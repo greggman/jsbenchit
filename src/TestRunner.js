@@ -1,6 +1,6 @@
 import * as model from './model.js';
 
-export default class TestRunner {
+export default class TestRunner extends EventTarget {
   abort() {
     if (this._abortImpl) {
       this._abortImpl();
@@ -75,6 +75,11 @@ export default class TestRunner {
             delete newData.id;
             delete newData.name;
             model.setTestResult(ndx, newData, window.navigator.userAgent);
+            const event = new Event('progress');
+            event.data = {
+              testNdx: ndx
+            };
+            this.dispatchEvent(event);
           };
 
           const handlers = {
