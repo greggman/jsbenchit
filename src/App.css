@@ -271,6 +271,7 @@ input[type="password"] {
   width: 1em;
   color: #888;
 }
+/* -------------------- */
 .results {
   background: var(--title-bg-color);
   padding: 10px;
@@ -311,6 +312,20 @@ input[type="password"] {
   padding: 0 5px 0 5px;
   white-space: nowrap;
 }
+.results .delete:hover {
+  color: red;
+}
+.results .delete {
+  display: none;
+  float: right;
+  cursor: default;
+  user-select: none;
+  font-weight: bold;
+}
+.results:hover .delete {
+  display: block;
+}
+/* ----------------------- */
 .hidee {
   position: relative;
   display: flex;
