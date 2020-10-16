@@ -1,6 +1,7 @@
 import React from 'react';
 import Results from './Results';
 import {parse} from 'platform';
+import * as model from './model.js';
 
 export default function Platforms(props) {
   const {tests} = props;
@@ -23,7 +24,14 @@ export default function Platforms(props) {
           platforms.map((platform, ndx) => {
             return (
               <div key={`plat${ndx}`} className="results">
-                <div>{parse(platform).description}</div>
+                <div>{parse(platform).description}
+                  <div
+                    className="delete"
+                    onClick={() =>{
+                      model.deleteTestPlatform(platform);
+                    }}
+                  >ⓧ</div>
+                </div>
                 <Results tests={tests.filter(test => test.platforms[platform])} />
               </div>
             );

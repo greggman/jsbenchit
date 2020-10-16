@@ -231,6 +231,13 @@ export function setTestResult(ndx, results, platform) {
   notify();
 }
 
+export function deleteTestPlatform(platform) {
+  for (const test of data.tests) {
+    delete test.platforms[platform];
+  }
+  notify();
+}
+
 export function deleteTest(ndx) {
   data.tests.splice(ndx, 1);
   notify();
