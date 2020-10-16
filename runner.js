@@ -1,6 +1,7 @@
 /* global Benchmark */
 /* global model */
-(function() {
+
+(async function() {
   const benchmarkToData = b => {
     const stats = {
       ...(b.stats && b.stats),
@@ -20,6 +21,17 @@
       ...(b.error && {error: {...b.error}}),
     };
   };
+
+  if (model.settings?.test) {
+    const testSettings = {
+      delay: 0,
+      initCount: 1,
+      maxTime: 0.00001,
+      minSamples: 1,
+      minTime: 0.00001,
+    };
+    Object.assign(Benchmark.options, testSettings);
+  }
 
   const suite = new Benchmark.Suite('WTF', {
     onAbort: () => {},
