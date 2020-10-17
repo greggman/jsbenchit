@@ -95,9 +95,11 @@ url: "https://api.github.com/gists"
     const gist = await this.authorizedOctokit.gists.update({
       gist_id,
       description: data.title,
-      public: isPublic,
       files: {
-        'jsBenchIt.json': JSON.stringify(data),
+        'jsBenchIt.json': {
+          content: JSON.stringify(data),
+          filename: 'jsBenchIt.json',
+        },
       },
     });
     return {
