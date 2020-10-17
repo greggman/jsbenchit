@@ -1,4 +1,6 @@
-O show avatar
+O fix abort
+O move "stop" up
+O show message, each test runs 5 seconds, time left
 O add TESTS!!!!
 O convert error message/lineNo back to test?
 O show error message for tests
@@ -9,5 +11,3 @@ O add hints
 O load revisions
 O allow deleting platforms
 O don't save to localStorage if no change since loaded?
-O add logos, icon
-  O og
