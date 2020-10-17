@@ -119,8 +119,6 @@ export default class TestRunner extends EventTarget {
             const fn = handlers[type];
             if (fn) {
               fn(data);
-            } else {
-              console.error('unknown code', e.data);
             }
           };
           window.addEventListener('message', handleMessage);
