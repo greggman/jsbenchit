@@ -255,6 +255,9 @@ export function setData(newData) {
   data = newData;
   notify();
   set('updateVersion', get('updateVersion') + 1);
+  if (process.env.NODE_ENV === 'development') {
+    window.d = data;
+  }
 }
 
 export function clearAllTestResults() {

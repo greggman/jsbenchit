@@ -18,10 +18,6 @@ import TestRunner from './TestRunner.js';
 
 import './App.css';
 
-if (process.env.NODE_ENV === 'development') {
-  window.d = model.data;
-}
-
 const backupKey = 'jsBenchIt-backup';
 const noJSX = () => [];
 const stringOrEmpty = (str, prefix = '', suffix = '') => str ? `${prefix}${str}${suffix}` : '';
