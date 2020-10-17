@@ -9,15 +9,15 @@ const darkMatcher = window.matchMedia
 
 function Result(props) {
   const isDarkMode = darkMatcher.matches;
-  const {max, test} = props;
-  const {name, results} = test;
-  const {aborted, hz} = results;
+  const {max, test, result} = props;
+  const {name} = test;
+  const {aborted, hz} = result;
   const unRun = hz === undefined;
   const msg = aborted ? 
      'aborted' :
      unRun
          ? 'not run'
-         : formatResults(results);
+         : formatResults(result);
   const zeroToOne = hz / max;
   const width = aborted || unRun ? '100%' : `${(zeroToOne * 100).toFixed(1)}%`;
   const background = (aborted || unRun) ? {} : {background: hsl(1 / 7 - zeroToOne / 7, 1, isDarkMode ? 0.4 : 0.8)};
@@ -40,14 +40,14 @@ function Result(props) {
 
 
 export default function Results(props) {
-  const {tests} = props;
+  const {tests, getResultFn} = props;
   const max = tests
       .filter(testResultsAreValid)
-      .reduce((max, test) => Math.max(max, test.results.hz || 0), 0);
+      .reduce((max, test) => Math.max(max, getResultFn(test).hz || 0), 0);
   return (
     <div>
       {
-        tests.map((test, ndx) => (<Result max={max} test={test} key={`res${ndx}`} />))
+        tests.map((test, ndx) => (<Result max={max} test={test} result={getResultFn(test)} key={`res${ndx}`} />))
       }
     </div>
   );

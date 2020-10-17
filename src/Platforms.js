@@ -32,7 +32,10 @@ export default function Platforms(props) {
                     }}
                   >ⓧ</div>
                 </div>
-                <Results tests={tests.filter(test => test.platforms[platform])} />
+                <Results 
+                  tests={tests.filter(test => test.platforms[platform])}
+                  getResultFn={test => test.platforms[platform]}
+                />
               </div>
             );
           })
