@@ -124,7 +124,8 @@ export default class TestRunner extends EventTarget {
             }
           };
           window.addEventListener('message', handleMessage);
-          iframe.src = `https://jsbenchitrunner.devcomments.org/runner.html${test ? '?test=true' : ''}`;
+          iframe.src = `https://jsbenchitrunner.devcomments.org/runner-02.html${test ? '?test=true' : ''}`;
+          //iframe.src = `http://localhost:8081/runner-02.html${test ? '?test=true' : ''}`;
           iframe.style.display = 'none';
           document.body.appendChild(iframe);
         });
