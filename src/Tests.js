@@ -3,7 +3,7 @@ import Results from './Results';
 import {parse} from 'platform';
 import * as model from './model.js';
 
-export default class Platforms extends React.Component {
+export default class Tests extends React.Component {
   handleChange = () => {
     this.forceUpdate();
   }
@@ -28,23 +28,25 @@ export default class Platforms extends React.Component {
 
     return (
       <div>
-        <div>By Platform:</div>
+        <div>By Test:</div>
         <div>
           {
-            platforms.map((platform, ndx) => {
+            tests.map((test, ndx) => {
               return (
-                <div key={`plat${ndx}`} className="results">
-                  <div>{parse(platform).description}
-                    <div
-                      className="delete"
-                      onClick={() =>{
-                        model.deleteTestPlatform(platform);
-                      }}
-                    >ⓧ</div>
-                  </div>
+                <div key={`test${ndx}`} className="results">
+                  <div>{test.name}</div>
                   <Results 
-                    tests={tests.filter(test => test.platforms[platform])}
-                    getResultFn={test => test.platforms[platform]}
+                    tests={
+                      platforms
+                        .filter(platform => test.platforms[platform])
+                        .map(platform => {
+                          return {
+                            name: parse(platform).description,
+                            results: test.platforms[platform],
+                          };
+                        })
+                    }
+                    getResultFn={test => test.results}
                   />
                 </div>
               );
@@ -52,6 +54,6 @@ export default class Platforms extends React.Component {
           }
         </div>
       </div>
-    )
+    );
   }
 }

@@ -15,6 +15,7 @@ import Save from './Save.js';
 import Split from './Split.js';
 import TestArea from './TestArea.js';
 import TestRunner from './TestRunner.js';
+import Tests from './Tests.js';
 
 import './App.css';
 
@@ -81,12 +82,12 @@ class App extends React.Component {
     // Things like redux-tools make it less to type those
     // 50 lines but they still execute 50 to 500 lines of code
     // just to set a single value.
-    model.subscribe('dataVersion', (dataVersion) => {
+    model.subscribe(model.testsVersionKey, (dataVersion) => {
       this.setState({dataVersion})
     });
     // this is a hack because I can't figure out how to
     // update the CodeMirror areas
-    model.subscribe('updateVersion', (updateVersion) => {
+    model.subscribe(model.updateVersionKey, (updateVersion) => {
       this.setState({updateVersion})
     });
 
@@ -303,11 +304,8 @@ class App extends React.Component {
                           key={`ca${this.getTestKey(test)}`}
                           hackKey={hackKey}
                           desc={`Case ${ndx + 1}`}
-                          title={test.name}
-                          value={test.code}
-                          async={test.async}
-                          onTitleChange={title => model.setTestName(ndx, title)}
-                          onValueChange={value => model.setTestCode(ndx, value)}
+                          test={test}
+                          testNdx={ndx}
                           extra={extra}
                         />
                       );
@@ -325,8 +323,9 @@ class App extends React.Component {
                   </div>
                 </div>
                 <div className="right">
-                  <LatestResults tests={data.tests}/>
-                  <Platforms tests={data.tests}/>
+                  <LatestResults/>
+                  <Platforms/>
+                  <Tests/>
                 </div>
               </Split>
             </div>

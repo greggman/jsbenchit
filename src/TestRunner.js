@@ -1,4 +1,5 @@
 import * as model from './model.js';
+import {isDevelopment} from './flags.js';
 
 export default class TestRunner extends EventTarget {
   abort() {
@@ -14,7 +15,9 @@ export default class TestRunner extends EventTarget {
         return new Promise((resolve, reject) => {
           const iframe = document.createElement('iframe');
 
-          const base = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : window.location.origin;
+          const base = isDevelopment
+              ? 'http://localhost:8080'
+              : window.location.origin;
           const html = `
           <${'script'} type="module" src="${base}/error-reporter.js"></${'script'}>
           <${'script'} src="${base}/3rdparty/lodash.js"></${'script'}>

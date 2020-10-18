@@ -1,9 +1,11 @@
 import Ajv from 'ajv';
+
+import {isDevelopment} from './flags.js';
 import schema from './schema.json';
+import SubscriptionManager from './subscription-manager.js';
 
 const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
 const validator = ajv.compile(schema);
-const isDev = process.env.NODE_ENV === 'development';
 
 const trackedValues = {};
 
@@ -73,7 +75,156 @@ export function getNewTestData() {
 }
 
 /* eslint no-template-curly-in-string:0 */
-export let data = isDev ? {
+export let data;
+
+export const dataVersionKey = 'dataVersion';
+export const updateVersionKey = 'updateVersion';
+export const resultsVersionKey = 'resultsVersion';
+export const testsVersionKey = 'testsVersion';
+
+add(dataVersionKey, 0);   // any data changes (when an item in the data is change)
+add(updateVersionKey, 0);  // all data changes (when the entire data objects replaced with new data)
+add(resultsVersionKey, 0);  // results and test name changes
+add(testsVersionKey, 0);  // tests added or removed or the main name is changed
+
+const incVersion = key => set(key, get(key) + 1);
+const incDataVersion = _ => incVersion(dataVersionKey);
+const incResultsVersion = _ => incVersion(resultsVersionKey);
+const incTestsVersion = _ => incVersion(testsVersionKey);
+const incUpdateVersion = _ => {
+  incVersion(updateVersionKey);
+  incDataVersion();
+  incTestsVersion();
+  incResultsVersion();
+};
+
+export function addTest() {
+  const name = `test ${data.tests.length + 1}`;
+  data.tests.push({
+    name,
+    code: `// ${name}`,
+    results: {},
+    platforms: {},
+  });
+  incDataVersion();
+  incTestsVersion();
+}
+
+export function deleteTest(ndx) {
+  data.tests.splice(ndx, 1);
+  incDataVersion();
+  incTestsVersion();
+  incResultsVersion();
+}
+
+const testSubscriptionManager = new SubscriptionManager();
+
+export function subscribeTest(test, fn) {
+  testSubscriptionManager.subscribe(test, fn);
+}
+
+export function unsubscribeTest(test, fn) {
+  testSubscriptionManager.unsubscribe(test, fn);
+}
+
+export function getTests() {
+  return data.tests;
+}
+
+export function setTitle(title) {
+  data.title = title;
+  incDataVersion();
+  incResultsVersion();
+  incTestsVersion();
+}
+
+export function setInitialization(init) {
+  data.initialization = init;
+  incDataVersion();
+}
+
+export function setSetup(setup) {
+  data.setup = setup;
+  incDataVersion();
+}
+
+export function setTestName(ndx, name) {
+  const test = data.tests[ndx];
+  test.name = name;
+  incDataVersion();
+  incResultsVersion();
+  testSubscriptionManager.notify(test);
+}
+
+export function setTestCode(ndx, code) {
+  const test = data.tests[ndx];
+  test.code = code;
+  incDataVersion();
+  testSubscriptionManager.notify(test);
+}
+
+export function setTestResult(ndx, results, platform) {
+  const test = data.tests[ndx];
+  test.results = results;
+  test.platforms[platform] = results;
+  incDataVersion();
+  incResultsVersion();
+}
+
+export function deleteTestPlatform(platform) {
+  for (const test of data.tests) {
+    delete test.platforms[platform];
+  }
+  incDataVersion();
+  incResultsVersion();
+}
+
+
+export function validate(data) {
+  if (!validator(data)) {
+    debugger;
+    throw new Error(`data not valid:\n${validator.errors.map(e => `${e.message}: ${e.dataPath}`)}`);
+  }
+}
+
+export function setData(newData) {
+  validate(newData);
+  data = newData;
+  incUpdateVersion();
+  if (isDevelopment) {
+    window.d = data;
+  }
+}
+
+export function clearAllTestResults() {
+  for (const test of data.tests) {
+    test.results = {};
+  }
+  incDataVersion();
+  incResultsVersion();
+}
+
+export function resultsAreValid(results) {
+  return results && ! results.error && !results.aborted;
+}
+
+export function testResultsAreValid(test) {
+  return resultsAreValid(test.results);
+}
+
+function formatNumber(number) {
+  number = String(number).split('.');
+  return `${number[0].replace(/(?=(?:\d{3})+$)(?!\b)/g, ',')}${(number[1] ? `.${number[1]}` : '')}`;
+}
+
+export function formatResults(results) {
+  const {hz = 0, stats = {numSamples: 0, rme: 0}} = results;
+  const opsPerSec = formatNumber(hz.toFixed(hz < 100 ? 2 : 0));
+  const plusMinus = stats.rme.toFixed(2);
+  return `${opsPerSec} ops/sec ±${plusMinus}% (runs: ${stats.numSamples})`;
+}
+
+setData(isDevelopment ? {
   "title": "My test",
   "setup": "",
   "initialization": "const vowelArray = ['a', 'e', 'i', 'o', 'u'];\nconst isVowelByArray = c => vowelArray.includes(c.toLowerCase());\nconst isVowelByOr = c => {\n  c = c.toLowerCase();\n  return c === 'a' || c === 'e' || c === 'i' || c === 'o' || c === 'u';\n}\nconst test = new Array(1000).fill(0).map(_ => String.fromCharCode(0x61 + Math.random() * 26 | 0)).join('');\nconst expected = test.split('').reduce((sum, c) => sum + isVowelByArray(c), 0);\nconst verify = result => {\n  if (result !== expected) {\n    throw new Error(`actual: ${result} not equal to expected: ${expected}`);\n  }\n};\nconsole.log('-setup-');\n",
@@ -175,114 +326,4 @@ export let data = isDev ? {
       }
     }
   ]
-} : getNewTestData();
-
-if (!validator(data)) {
-  console.log(validator.errors);
-}
-
-add('dataVersion', 0);   // any data changes
-add('updateVersion', 0);  // all data changes
-
-function notify() {
-  set('dataVersion', get('dataVersion') + 1);
-}
-
-export function addTest() {
-  const name = `test ${data.tests.length + 1}`;
-  data.tests.push({
-    name,
-    code: `// ${name}`,
-    results: {},
-    platforms: {},
-  });
-  notify();
-}
-
-export function setTitle(title) {
-  data.title = title;
-  notify();
-}
-
-export function setInitialization(init) {
-  data.initialization = init;
-  notify();
-}
-
-export function setSetup(setup) {
-  data.setup = setup;
-  notify();
-}
-
-export function setTestName(ndx, name) {
-  data.tests[ndx].name = name;
-  notify();
-}
-
-export function setTestCode(ndx, code) {
-  data.tests[ndx].code = code;
-  notify();
-}
-
-export function setTestResult(ndx, results, platform) {
-  const test = data.tests[ndx];
-  test.results = results;
-  test.platforms[platform] = results;
-  notify();
-}
-
-export function deleteTestPlatform(platform) {
-  for (const test of data.tests) {
-    delete test.platforms[platform];
-  }
-  notify();
-}
-
-export function deleteTest(ndx) {
-  data.tests.splice(ndx, 1);
-  notify();
-}
-
-export function validate(data) {
-  if (!validator(data)) {
-    debugger;
-    throw new Error(`data not valid:\n${validator.errors.map(e => `${e.message}: ${e.dataPath}`)}`);
-  }
-}
-
-export function setData(newData) {
-  validate(newData);
-  data = newData;
-  notify();
-  set('updateVersion', get('updateVersion') + 1);
-  if (process.env.NODE_ENV === 'development') {
-    window.d = data;
-  }
-}
-
-export function clearAllTestResults() {
-  for (const test of data.tests) {
-    test.results = {};
-  }
-  notify();
-}
-
-export function resultsAreValid(results) {
-  return results && ! results.error && !results.aborted;
-}
-
-export function testResultsAreValid(test) {
-  return resultsAreValid(test.results);
-}
-
-function formatNumber(number) {
-  number = String(number).split('.');
-  return `${number[0].replace(/(?=(?:\d{3})+$)(?!\b)/g, ',')}${(number[1] ? `.${number[1]}` : '')}`;
-}
-
-export function formatResults(results) {
-  const {hz = 0, stats = {numSamples: 0, rme: 0}} = results;
-  const opsPerSec = formatNumber(hz.toFixed(hz < 100 ? 2 : 0));
-  const plusMinus = stats.rme.toFixed(2);
-  return `${opsPerSec} ops/sec ±${plusMinus}% (runs: ${stats.numSamples})`;
-}
+} : getNewTestData());
