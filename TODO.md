@@ -1,6 +1,5 @@
-O fix abort
-O move "stop" up
-O show message, each test runs 5 seconds, time left
+# To Do
+
 O add TESTS!!!!
 O convert error message/lineNo back to test?
 O show error message for tests
@@ -11,3 +10,9 @@ O add hints
 O load revisions
 O allow deleting platforms
 O don't save to localStorage if no change since loaded?
+
+# Done
+
+X fix abort
+X move "stop" up
+X show message, each test runs 5 seconds, time left
