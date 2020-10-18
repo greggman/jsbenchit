@@ -39,19 +39,4 @@ In any case this is open source so contributions welcome.
 
    As it is you need to go to github to delete
 
-- [ ] Let you disable tests?
-
-   It's really annoying to have save 5 tests and
-   you click run and don't find out test 5 is bad
-   until tests 1 through 4 have run
-
-- [ ] Let you run individual tests
-
-   Another solution to disabling test
-
-- [ ] Run each test 1 iteration to start
-
-   This should surface bugs immediately. These
-   would not be part of the benchmark.
-
 ## License: [MIT](LICENSE.md)
