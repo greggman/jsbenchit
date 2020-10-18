@@ -1,18 +1,17 @@
 # To Do
 
-O add TESTS!!!!
-O convert error message/lineNo back to test?
-O show error message for tests
-O allow disable test
-O add test button (runs 1 iteration each) just to test
-O if ?debug then show header github counts
-O add hints
-O load revisions
-O allow deleting platforms
-O don't save to localStorage if no change since loaded?
+- [ ] add TESTS!!!!
+- [ ] convert error message/lineNo back to test?
+- [ ] show error message for tests
+- [ ] if ?debug then show header github counts
+- [ ] add hints
+- [ ] load revisions
+- [ ] don't save to localStorage if no change since loaded?
 
 # Done
 
-X fix abort
-X move "stop" up
-X show message, each test runs 5 seconds, time left
+- [x] runs 1 iteration each) just to test
+- [x] allow deleting platforms
+- [x] fix abort
+- [x] move "stop" up
+- [x] show message, each test runs 5 seconds, time left
