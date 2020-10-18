@@ -30,6 +30,7 @@ const makeDisqusId = () => {
       ? `${encodeURIComponent(src)}`
       : '';
 }
+const makeId = _ => `${Date.now()}+${Math.random()}`;
 
 class App extends React.Component {
   constructor() {
@@ -49,6 +50,7 @@ class App extends React.Component {
       testNum: 0,
     };
     this.github = new GitHub();
+    this.testToKeyMap = new Map();
   }
   componentDidMount() {
     this.github.addEventListener('userdata', (e) => {
@@ -192,6 +194,14 @@ class App extends React.Component {
   handleAbort = () => {
     this.abort();
   };
+  getTestKey(test) {
+    let key = this.testToKeyMap.get(test);
+    if (!key) {
+      key = makeId();
+      this.testToKeyMap.set(test, key);
+    }
+    return key;
+  }
   renderHelp = () => {
     return (<Help onClose={this.closeDialog} />);
   }
@@ -290,7 +300,7 @@ class App extends React.Component {
                       );
                       return (
                         <TestArea
-                          key={`ca${ndx}`}
+                          key={`ca${this.getTestKey(test)}`}
                           hackKey={hackKey}
                           desc={`Case ${ndx + 1}`}
                           title={test.name}
