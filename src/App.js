@@ -281,14 +281,14 @@ class App extends React.Component {
               <Split direction="horizontal">
                 <div className="left">
                   <NamedCodeArea
-                    hackKey={hackKey}
+                    key={`n1${hackKey}`}
                     title="Initialization"
                     value={data.initialization}
                     show={data.initialization.length > 0}
                     onValueChange={v => model.setInitialization(v)}
                   />
                   <NamedCodeArea
-                    hackKey={hackKey}
+                    key={`n2${hackKey}`}
                     title="Before Each Test"
                     value={data.setup}
                     show={data.setup.length > 0}

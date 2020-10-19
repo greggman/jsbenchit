@@ -13,12 +13,12 @@ export default class Tests extends React.Component {
   componentWillUnmount() {
     model.unsubscribe(model.resultsVersionKey, this.handleChange);
   }
-  render() {
+  renderTests() {
     const tests = model.getTests();
-
     // TODO: as this is costly we should decide how to optimize
     // 1. change the format?
     // 2. use shouldComponent
+    let numResults = 0;
     const platforms = [...tests.reduce((platforms, test) => {
       return Object.keys(test.platforms).reduce((platforms, plat) => {
         platforms.add(plat);
@@ -26,8 +26,8 @@ export default class Tests extends React.Component {
       }, platforms);
     }, new Set())];
 
-    return (
-      <div>
+    const components = (
+      <React.Fragment>
         <div>By Test:</div>
         <div>
           {
@@ -40,6 +40,7 @@ export default class Tests extends React.Component {
                       platforms
                         .filter(platform => test.platforms[platform])
                         .map(platform => {
+                          ++numResults;
                           return {
                             name: parse(platform).description,
                             results: test.platforms[platform],
@@ -53,6 +54,18 @@ export default class Tests extends React.Component {
             })
           }
         </div>
+      </React.Fragment>);
+
+    return {
+      numResults,
+      components,
+    };
+  }
+  render() {
+    const {numResults, components} = this.renderTests();
+    return (
+      <div>
+        {numResults ? components : []}
       </div>
     );
   }

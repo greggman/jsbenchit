@@ -28,29 +28,35 @@ export default class Platforms extends React.Component {
 
     return (
       <div>
-        <div>By Platform:</div>
-        <div>
-          {
-            platforms.map((platform, ndx) => {
-              return (
-                <div key={`plat${ndx}`} className="results">
-                  <div>{parse(platform).description}
-                    <div
-                      className="delete"
-                      onClick={() =>{
-                        model.deleteTestPlatform(platform);
-                      }}
-                    >ⓧ</div>
-                  </div>
-                  <Results 
-                    tests={tests.filter(test => test.platforms[platform])}
-                    getResultFn={test => test.platforms[platform]}
-                  />
-                </div>
-              );
-            })
-          }
-        </div>
+        {platforms.length
+          ? (
+          <React.Fragment>
+            <div>By Platform:</div>
+            <div>
+              {
+                platforms.map((platform, ndx) => {
+                  return (
+                    <div key={`plat${ndx}`} className="results">
+                      <div>{parse(platform).description}
+                        <div
+                          className="delete"
+                          onClick={() =>{
+                            model.deleteTestPlatform(platform);
+                          }}
+                        >ⓧ</div>
+                      </div>
+                      <Results 
+                        tests={tests.filter(test => test.platforms[platform])}
+                        getResultFn={test => test.platforms[platform]}
+                      />
+                    </div>
+                  );
+                })
+              }
+            </div>
+          </React.Fragment>)
+          : []
+        }
       </div>
     )
   }
