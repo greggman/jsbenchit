@@ -276,6 +276,9 @@ input[type="password"] {
   background: var(--title-bg-color);
   padding: 10px;
 }
+.results>div {
+  overflow: hidden;
+}
 .result {
   position: relative;
   background: rgba(0, 0, 0, 0.1);
@@ -300,7 +303,6 @@ input[type="password"] {
 .result-info {
   position: relative;
   z-index: 2;
-  overflow: hidden;
 }
 .result-name {
   background: rgba(0,0,0,0.2);
