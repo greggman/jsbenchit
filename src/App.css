@@ -151,8 +151,7 @@ a {
   padding: 10px 10px 0 10px;
   position: relative;
 }
-.top>div,
-.bottom>div {
+.top>div {
   flex: 1 1 50%;
 }
 .top .right {
