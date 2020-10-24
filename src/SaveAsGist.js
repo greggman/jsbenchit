@@ -71,7 +71,7 @@ export default class SaveAsGist extends React.Component {
         <button
           className={classNames({disabled: saving})}
           data-type="new"
-          onClick={this.saveNewGist}
+          onClick={this.saveNew}
         >Save to New Gist</button>
         <button
           className={classNames({disabled: !canUpdate || saving})}
