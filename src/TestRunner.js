@@ -1,6 +1,7 @@
 import * as model from './model.js';
 import {isDevelopment} from './flags.js';
 import {createURL} from './url.js';
+import * as winMsgMgr from './window-message-manager.js';
 
 export default class TestRunner extends EventTarget {
   abort() {
@@ -60,7 +61,12 @@ export default class TestRunner extends EventTarget {
 
           let cleanup = (result) => {
             cleanup = () => {}; // only cleanup once
-            window.removeEventListener('message', handleMessage);
+            winMsgMgr.remove('uncaughtError', handleUncaughtError);
+            winMsgMgr.remove('abort', handleAbort);
+            winMsgMgr.remove('error', handleError);
+            winMsgMgr.remove('cycle', handleCycle);
+            winMsgMgr.remove('complete', handleComplete);
+            winMsgMgr.remove('gimmeDaCodez', handleGimmeDaCodez);
             iframe.remove();
             resolve(result);
           };
@@ -86,46 +92,43 @@ export default class TestRunner extends EventTarget {
             this.dispatchEvent(event);
           };
 
-          const handlers = {
-            // error caught by window.addEventListener('error')
-            uncaughtError(data) {
-              abort();
-              resolve({success: false, data});
-            },
-            // benchmark onAbort
-            abort(data) {
-              cleanup({success: true, data: {message: 'aborted because of error'}});
-            },
-            // benchmark onError
-            error(data) {
-              updateTestResults(data);
-            },
-            // benchmark onCycle
-            cycle(data) {
-              if (!test) {
-                updateTestResults(data)
-              }
-            },
-            // benchmark onComplete
-            complete(data) {
-              cleanup({success: true, data});
-            },
-            gimmeDaCodez: () => {
-              iframe.contentWindow.postMessage({
-                type: 'run',
-                data: runnerData,
-              }, "*");
-            },
+          // error caught by window.addEventListener('error')
+          const handleUncaughtError = (data) => {
+            abort();
+            resolve({success: false, data});
           };
-
-          const handleMessage = (e) => {
-            const {type, data} =  e.data;
-            const fn = handlers[type];
-            if (fn) {
-              fn(data);
+          // benchmark onAbort
+          const handleAbort = (data) => {
+            cleanup({success: true, data: {message: 'aborted because of error'}});
+          };
+          // benchmark onError
+          const handleError = (data) => {
+            updateTestResults(data);
+          };
+          // benchmark onCycle
+          const handleCycle = (data) => {
+            if (!test) {
+              updateTestResults(data)
             }
           };
-          window.addEventListener('message', handleMessage);
+          // benchmark onComplete
+          const handleComplete = (data) => {
+            cleanup({success: true, data});
+          };
+          const handleGimmeDaCodez = () => {
+            iframe.contentWindow.postMessage({
+              type: 'run',
+              data: runnerData,
+            }, "*");
+          };
+
+          winMsgMgr.on('uncaughtError', handleUncaughtError);
+          winMsgMgr.on('abort', handleAbort);
+          winMsgMgr.on('error', handleError);
+          winMsgMgr.on('cycle', handleCycle);
+          winMsgMgr.on('complete', handleComplete);
+          winMsgMgr.on('gimmeDaCodez', handleGimmeDaCodez);
+
           iframe.src = isDevelopment
               ? createURL('http://localhost:8081/runner-03.html', {...(test && {test}), url: 'http://localhost:8080/jsbenchit-runner.js'})
               : createURL('https://jsbenchitrunner.devcomments.org/runner-03.html', {...(test && {test}), url: 'https://jsbenchit.org/jsbenchit-runner.js'});

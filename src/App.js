@@ -4,14 +4,17 @@ import { classNames } from './css-utils.js';
 import EditLine from './EditLine.js';
 import Footer from './Footer.js';
 import GitHub from './GitHub.js';
+import {storageManager} from './globals.js';
 import Help from './Help.js';
 import LatestResults from './LatestResults.js';
 import Load from './Load.js';
 import {loadGistFromSrc} from './loader.js';
 import * as model from './model.js';
 import NamedCodeArea from './NamedCodeArea.js';
+import OAuthManager from './OAuthManager.js';
 import Platforms from './Platforms.js';
 import Save from './Save.js';
+import ServiceContext from './ServiceContext.js';
 import Split from './Split.js';
 import TestArea from './TestArea.js';
 import TestRunner from './TestRunner.js';
@@ -45,13 +48,13 @@ class App extends React.Component {
       dialog: noJSX,
       dataVersion: 0,
       gistId: '',
-      pat: localStorage.getItem('pat'),
       messages: [],
       userData: {},
       testNum: 0,
     };
     this.github = new GitHub();
     this.testToKeyMap = new Map();
+    this.oauthManager = new OAuthManager(storageManager);
   }
   componentDidMount() {
     this.github.addEventListener('userdata', (e) => {
@@ -96,7 +99,7 @@ class App extends React.Component {
     });
 
     const query = Object.fromEntries(new URLSearchParams(window.location.search).entries());
-    const backup = localStorage.getItem(backupKey);
+    const backup = storageManager.get(backupKey, true);
     let loaded = false;
     if (backup) {
       try {
@@ -109,7 +112,7 @@ class App extends React.Component {
       } catch (e) {
         //
       }
-      localStorage.removeItem(backupKey);
+      storageManager.delete(backupKey, true);
     }
     if (!loaded && query.src) {
       this.loadData(query.src);
@@ -153,10 +156,10 @@ class App extends React.Component {
   }
   handleRun = async () => {
     this.setState({running: true, testNum: 0});
-    localStorage.setItem(backupKey, JSON.stringify({
+    storageManager.set(backupKey, JSON.stringify({
       href: window.location.href,
       data: model.data,
-    }));
+    }), true);
     console.log('--start--');
     try {
       const testRunner = new TestRunner();
@@ -172,7 +175,7 @@ class App extends React.Component {
       this.addError(e);
     }
     this.abort = undefined;
-    localStorage.removeItem(backupKey);
+    storageManager.delete(backupKey, true);
     console.log('--done--');
     this.setState({running: false});
   }
@@ -211,8 +214,6 @@ class App extends React.Component {
       <Load
         onLoad={this.handleOnLoad}
         onClose={this.closeDialog}
-        addError={this.addError}
-        github={this.github}
       />
     );
   }
@@ -222,8 +223,6 @@ class App extends React.Component {
       <Save
         onSave={this.handleOnSave}
         onClose={this.closeDialog}
-        addError={this.addError}
-        github={this.github}
         gistId={this.state.gistId}
         data={data} />
     );
@@ -245,102 +244,110 @@ class App extends React.Component {
     const disabledClass = classNames({disabled});
     return (
       <div className="App">
-        <div className="head">
-          <div>
-            <img src="/resources/images/logo.svg" alt="logo"/>
-          jsBenchIt.org<span className="beta">(beta)</span>
-          </div>
-          <div>
-          <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/">
-            <img alt="github" src="/resources/images/octocat-icon.svg"/>
-          </a>
-          </div>
-        </div>
-        <div className="top">
-          <div className={classNames("left", {disabled})}>
-            <div className="name">
-              <EditLine value={data.title} onChange={v => model.setTitle(v)} />
-              {userData.name ? <div className="username"><a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}>{userData.name}</a></div> : []}
-              {userData.avatarURL ? <a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}><img className="avatar" src={userData.avatarURL} alt="avatar"/></a> : []}
+        <ServiceContext.Provider value={{
+          github: this.github,
+          oauthManager: this.oauthManager,
+          addError: this.addError,
+          addInfo: this.addInfo,
+          storageManager,
+        }}>
+          <div className="head">
+            <div>
+              <img src="/resources/images/logo.svg" alt="logo"/>
+            jsBenchIt.org<span className="beta">(beta)</span>
+            </div>
+            <div>
+            <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/">
+              <img alt="github" src="/resources/images/octocat-icon.svg"/>
+            </a>
             </div>
           </div>
-          <div className="right">
-            { running
-                ? <button tabIndex="1" onClick={this.handleAbort}>Cancel</button>
-                : <button tabIndex="1" onClick={this.handleRun}>Run</button>
-            }
-            <button tabIndex="1" className={disabledClass} onClick={this.handleSave}>Save</button>
-            <button tabIndex="1" className={disabledClass} onClick={this.handleNew}>New</button>
-            <button tabIndex="1" className={disabledClass} onClick={this.handleLoad}>Load</button>
-            <button tabIndex="1" className={disabledClass} onClick={this.handleHelp}>?</button>
+          <div className="top">
+            <div className={classNames("left", {disabled})}>
+              <div className="name">
+                <EditLine value={data.title} onChange={v => model.setTitle(v)} />
+                {userData.name ? <div className="username"><a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}>{userData.name}</a></div> : []}
+                {userData.avatarURL ? <a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}><img className="avatar" src={userData.avatarURL} alt="avatar"/></a> : []}
+              </div>
+            </div>
+            <div className="right">
+              { running
+                  ? <button tabIndex="1" onClick={this.handleAbort}>Cancel</button>
+                  : <button tabIndex="1" onClick={this.handleRun}>Run</button>
+              }
+              <button tabIndex="1" className={disabledClass} onClick={this.handleSave}>Save</button>
+              <button tabIndex="1" className={disabledClass} onClick={this.handleNew}>New</button>
+              <button tabIndex="1" className={disabledClass} onClick={this.handleLoad}>Load</button>
+              <button tabIndex="1" className={disabledClass} onClick={this.handleHelp}>?</button>
+            </div>
           </div>
-        </div>
-        {
-          loading ? [] : (
-            <div className="bottom">
-              <Split direction="horizontal">
-                <div className="left">
-                  <NamedCodeArea
-                    key={`n1${hackKey}`}
-                    title="Initialization"
-                    value={data.initialization}
-                    show={data.initialization.length > 0}
-                    onValueChange={v => model.setInitialization(v)}
-                  />
-                  <NamedCodeArea
-                    key={`n2${hackKey}`}
-                    title="Before Each Test"
-                    value={data.setup}
-                    show={data.setup.length > 0}
-                    onValueChange={v => model.setSetup(v)}
-                   />
-                  {
-                    data.tests.map((test, ndx) => {
-                      const extra = (
-                        <div><button onClick={_ => model.deleteTest(ndx)}>-</button></div>
-                      );
-                      return (
-                        <TestArea
-                          key={`ca${this.getTestKey(test)}`}
-                          hackKey={hackKey}
-                          desc={`Case ${ndx + 1}`}
-                          test={test}
-                          testNdx={ndx}
-                          extra={extra}
-                        />
-                      );
-                    })
-                  }
-                  <div>
-                    <button onClick={model.addTest}>+</button>
-                  </div>
-                  <div className="blocked" style={hideStyle}>
-                    <div className="abort">
-                      <div>Testing {testNum + 1} of {data.tests.length}</div>
-                      <div>Time remaining: ~{(data.tests.length - testNum) * 5}s</div>
-                      <div><button onClick={this.handleAbort}>Stop Benchmark</button></div>
+          {
+            loading ? [] : (
+              <div className="bottom">
+                <Split direction="horizontal">
+                  <div className="left">
+                    <NamedCodeArea
+                      key={`n1${hackKey}`}
+                      title="Initialization"
+                      value={data.initialization}
+                      show={data.initialization.length > 0}
+                      onValueChange={v => model.setInitialization(v)}
+                    />
+                    <NamedCodeArea
+                      key={`n2${hackKey}`}
+                      title="Before Each Test"
+                      value={data.setup}
+                      show={data.setup.length > 0}
+                      onValueChange={v => model.setSetup(v)}
+                     />
+                    {
+                      data.tests.map((test, ndx) => {
+                        const extra = (
+                          <div><button onClick={_ => model.deleteTest(ndx)}>-</button></div>
+                        );
+                        return (
+                          <TestArea
+                            key={`ca${this.getTestKey(test)}`}
+                            hackKey={hackKey}
+                            desc={`Case ${ndx + 1}`}
+                            test={test}
+                            testNdx={ndx}
+                            extra={extra}
+                          />
+                        );
+                      })
+                    }
+                    <div>
+                      <button onClick={model.addTest}>+</button>
+                    </div>
+                    <div className="blocked" style={hideStyle}>
+                      <div className="abort">
+                        <div>Testing {testNum + 1} of {data.tests.length}</div>
+                        <div>Time remaining: ~{(data.tests.length - testNum) * 5}s</div>
+                        <div><button onClick={this.handleAbort}>Stop Benchmark</button></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="right">
-                  <LatestResults/>
-                  <Platforms/>
-                  <Tests/>
-                </div>
-              </Split>
-            </div>
-          )
-        }
-        <Footer
-          disqusId={makeDisqusId()}
-          title={data.title}
-        />
-        {dialog()}
-        <div className="messages">
-          {
-            this.state.messages.map(({msg, className}, i) => (<div className={className} key={`err${i}`}>{msg}</div>))
+                  <div className="right">
+                    <LatestResults/>
+                    <Platforms/>
+                    <Tests/>
+                  </div>
+                </Split>
+              </div>
+            )
           }
-        </div>
+          <Footer
+            disqusId={makeDisqusId()}
+            title={data.title}
+          />
+          {dialog()}
+          <div className="messages">
+            {
+              this.state.messages.map(({msg, className}, i) => (<div className={className} key={`err${i}`}>{msg}</div>))
+            }
+          </div>
+        </ServiceContext.Provider>
       </div>
     );
   }

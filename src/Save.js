@@ -6,11 +6,11 @@ import SaveAsURL from './SaveAsURL.js';
 import Section from './Section.js';
 
 export default function Save(props) {
-  const {data, github, gistId, onSave, onClose, addError} = props;
+  const {data, gistId, onSave, onClose} = props;
   return (
     <Dialog title="Save As" onClose={onClose}>
       <Section heading="Save As Gist">
-        <SaveAsGist gistId={gistId} github={github} data={data} onSave={onSave} addError={addError} onClose={onClose} />
+        <SaveAsGist gistId={gistId} data={data} onSave={onSave} onClose={onClose} />
       </Section>
       <Section heading="Save As URL">
         <SaveAsURL data={data} />

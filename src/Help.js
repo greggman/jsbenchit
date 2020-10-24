@@ -16,16 +16,7 @@ export default function Help(props) {
       <h2>Saving</h2>
       <p>You can save your tests in multiple ways.</p>
       <ol>
-        <li>To a github gist using a <a target="_blank" rel="noopener noreferrer" href="https://github.com/settings/tokens">Personal Access Token</a>
-          <p>
-           Be sure to give the token <b>ONLY GIST</b> permissions. Paste it into the
-           save as UI click <code>Save to new gist</code>. Be sure to keep a copy of it
-           somewhere so you can use if you clear your browser's storage or switch
-           machines or browser. This site is a static site. The token is saved
-           in the browser only. You should also be able to save it in your browser's 
-           password manager though you might have to click the key icon to tell it to save it.
-           The username will appear as "unused" since it's not actually used.
-          </p>
+        <li>To a github gist using your github account.
         </li>
         <li>Save it manually into github
           <p>
