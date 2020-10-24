@@ -3,7 +3,7 @@
 See [jsbenchit.org](https://jsbenchit.org)
 
 A JavaScript Perf Tester based on Github Gists.
-It's your data!
+It's your data! 😍
 
 Also see [jsgist.org](https://jsgist.org)
 
@@ -23,7 +23,7 @@ In any case this is open source so contributions welcome.
   What's a good example of an async test though? Maybe testing
   passing data to a worker and back?
 
-- [ ] support github login instead of using personal access tokens?
+- [X] support github login instead of using personal access tokens?
 
    I didn't do that originally because there is no way to login
    with github without a server in the middle. It might be simple
