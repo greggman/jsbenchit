@@ -1,5 +1,6 @@
 import * as model from './model.js';
 import {isDevelopment} from './flags.js';
+import {createURL} from './url.js';
 
 export default class TestRunner extends EventTarget {
   abort() {
@@ -125,8 +126,9 @@ export default class TestRunner extends EventTarget {
             }
           };
           window.addEventListener('message', handleMessage);
-          iframe.src = `https://jsbenchitrunner.devcomments.org/runner-02.html${test ? '?test=true' : ''}`;
-          //iframe.src = `http://localhost:8081/runner-02.html${test ? '?test=true' : ''}`;
+          iframe.src = isDevelopment
+              ? createURL('http://localhost:8081/runner-03.html', {...(test && {test}), url: 'http://localhost:8080/jsbenchit-runner.js'})
+              : createURL('https://jsbenchitrunner.devcomments.org/runner-03.html', {...(test && {test}), url: 'https://jsbenchit.org/jsbenchit-runner.js'});
           iframe.style.display = 'none';
           document.body.appendChild(iframe);
         });
