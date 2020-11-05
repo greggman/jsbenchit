@@ -19,9 +19,13 @@ export default class LatestResults extends React.Component {
 
     const tests = model.getTests();
     return (
-      <div className="results">
+      <div className="results-group">
         <div>Latest Results:</div>
-        <Results tests={tests} getResultFn={test => test.results} />
+        <div>
+          <div className="results">
+            <Results tests={tests} getResultFn={test => test.results} />
+          </div>
+        </div>
       </div>
     );
   }

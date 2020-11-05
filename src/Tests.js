@@ -64,7 +64,7 @@ export default class Tests extends React.Component {
   render() {
     const {numResults, components} = this.renderTests();
     return (
-      <div>
+      <div className="results-group">
         {numResults ? components : []}
       </div>
     );

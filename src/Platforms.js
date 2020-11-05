@@ -27,7 +27,7 @@ export default class Platforms extends React.Component {
     }, new Set())];
 
     return (
-      <div>
+      <div className="results-group">
         {platforms.length
           ? (
           <React.Fragment>

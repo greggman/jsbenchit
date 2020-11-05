@@ -8,7 +8,7 @@ import {storageManager} from './globals.js';
 import Help from './Help.js';
 import LatestResults from './LatestResults.js';
 import Load from './Load.js';
-import {loadGistFromSrc} from './loader.js';
+import {isGistId, loadGistFromSrc} from './loader.js';
 import * as model from './model.js';
 import NamedCodeArea from './NamedCodeArea.js';
 import OAuthManager from './OAuthManager.js';
@@ -19,6 +19,7 @@ import Split from './Split.js';
 import TestArea from './TestArea.js';
 import TestRunner from './TestRunner.js';
 import Tests from './Tests.js';
+import UserManager from './UserManager.js';
 
 import './App.css';
 
@@ -26,14 +27,6 @@ const backupKey = 'jsBenchIt-backup';
 const noJSX = () => [];
 const stringOrEmpty = (str, prefix = '', suffix = '') => str ? `${prefix}${str}${suffix}` : '';
 const darkMatcher = window.matchMedia('(prefers-color-scheme: dark)');
-const makeDisqusId = () => {
-  const loc = window.location;
-  const query = Object.fromEntries(new URLSearchParams(loc.search).entries());
-  const src = query.src;
-  return src
-      ? `${encodeURIComponent(src)}`
-      : '';
-}
 const makeId = _ => `${Date.now()}+${Math.random()}`;
 
 class App extends React.Component {
@@ -42,7 +35,6 @@ class App extends React.Component {
     this.state = {
       path: window.location.pathname,
       dark: darkMatcher.matches,
-      disqusId: makeDisqusId(),
       running: false,
       loading: false,
       dialog: noJSX,
@@ -55,6 +47,11 @@ class App extends React.Component {
     this.github = new GitHub();
     this.testToKeyMap = new Map();
     this.oauthManager = new OAuthManager(storageManager);
+    this.userManager = new UserManager({
+      oauthManager: this.oauthManager,
+      github: this.github,
+      addError: this.addError,
+    });
   }
   componentDidMount() {
     this.github.addEventListener('userdata', (e) => {
@@ -106,6 +103,11 @@ class App extends React.Component {
         const data = JSON.parse(backup);
         if (data.href === window.location.href) {
           model.setData(data.data);
+          const url = new URL(data.href);
+          const {src} = Object.fromEntries(new URLSearchParams(url.search).entries());
+          if (isGistId(src)) {
+            this.setState({gistId: src});
+          }
           loaded = true;
           this.addInfo('loaded backup from local storage')
         }
@@ -121,10 +123,13 @@ class App extends React.Component {
   async loadData(src) {
     this.setState({loading: true});
     try {
-      const {data, id} = await loadGistFromSrc(src, this.github);
+      const {data, id, rawData} = await loadGistFromSrc(src, this.github);
       model.setData(data);
       if (id) {
-        this.setState({gistId: src})
+        this.setState({
+          gistId: src,
+          gistOwnerId: rawData?.owner?.id,
+        })
       }
     } catch (e) {
       console.warn(e);
@@ -224,6 +229,7 @@ class App extends React.Component {
         onSave={this.handleOnSave}
         onClose={this.closeDialog}
         gistId={this.state.gistId}
+        gistOwnerId={this.state.gistOwnerId}
         data={data} />
     );
   }
@@ -236,6 +242,7 @@ class App extends React.Component {
       updateVersion: hackKey,
       userData,
       testNum,
+      gistId,
     } = this.state;
     const disabled = running;
     const hideStyle = {
@@ -250,6 +257,7 @@ class App extends React.Component {
           addError: this.addError,
           addInfo: this.addInfo,
           storageManager,
+          userManager: this.userManager,
         }}>
           <div className="head">
             <div>
@@ -266,8 +274,8 @@ class App extends React.Component {
             <div className={classNames("left", {disabled})}>
               <div className="name">
                 <EditLine value={data.title} onChange={v => model.setTitle(v)} />
-                {userData.name ? <div className="username"><a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}>{userData.name}</a></div> : []}
-                {userData.avatarURL ? <a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}><img className="avatar" src={userData.avatarURL} alt="avatar"/></a> : []}
+                {!!userData.name && <div className="username"><a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}>{userData.name}</a></div>}
+                {!!userData.avatarURL && <a target="_blank" rel="noopener noreferrer" href={`https://github.com/${userData.name}`}><img className="avatar" src={userData.avatarURL} alt="avatar"/></a>}
               </div>
             </div>
             <div className="right">
@@ -338,7 +346,7 @@ class App extends React.Component {
             )
           }
           <Footer
-            disqusId={makeDisqusId()}
+            gistId={gistId}
             title={data.title}
           />
           {dialog()}

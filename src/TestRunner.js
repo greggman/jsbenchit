@@ -61,12 +61,12 @@ export default class TestRunner extends EventTarget {
 
           let cleanup = (result) => {
             cleanup = () => {}; // only cleanup once
-            winMsgMgr.remove('uncaughtError', handleUncaughtError);
-            winMsgMgr.remove('abort', handleAbort);
-            winMsgMgr.remove('error', handleError);
-            winMsgMgr.remove('cycle', handleCycle);
-            winMsgMgr.remove('complete', handleComplete);
-            winMsgMgr.remove('gimmeDaCodez', handleGimmeDaCodez);
+            winMsgMgr.remove('uncaughtError', null, handleUncaughtError);
+            winMsgMgr.remove('abort', null, handleAbort);
+            winMsgMgr.remove('error', null, handleError);
+            winMsgMgr.remove('cycle', null, handleCycle);
+            winMsgMgr.remove('complete', null, handleComplete);
+            winMsgMgr.remove('gimmeDaCodez', null, handleGimmeDaCodez);
             iframe.remove();
             resolve(result);
           };
@@ -122,12 +122,12 @@ export default class TestRunner extends EventTarget {
             }, "*");
           };
 
-          winMsgMgr.on('uncaughtError', handleUncaughtError);
-          winMsgMgr.on('abort', handleAbort);
-          winMsgMgr.on('error', handleError);
-          winMsgMgr.on('cycle', handleCycle);
-          winMsgMgr.on('complete', handleComplete);
-          winMsgMgr.on('gimmeDaCodez', handleGimmeDaCodez);
+          winMsgMgr.on('uncaughtError', null, handleUncaughtError);
+          winMsgMgr.on('abort', null, handleAbort);
+          winMsgMgr.on('error', null, handleError);
+          winMsgMgr.on('cycle', null, handleCycle);
+          winMsgMgr.on('complete', null, handleComplete);
+          winMsgMgr.on('gimmeDaCodez', null, handleGimmeDaCodez);
 
           iframe.src = isDevelopment
               ? createURL('http://localhost:8081/runner-03.html', {...(test && {test}), url: 'http://localhost:8080/jsbenchit-runner.js'})
