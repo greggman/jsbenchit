@@ -15,8 +15,16 @@ html {
   background: var(--main-bg-color);
   color: var(--main-fg-color);
 }
+html, body {
+  height: 100%;
+}
 *, *:before, *:after {
   box-sizing: inherit;
+}
+/* ---------------- */
+#root {
+  height: 100%;
+  overflow: auto;
 }
 .head {
   display: flex;
