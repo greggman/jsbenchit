@@ -36,6 +36,10 @@ html, body {
   padding: 10px;
   background: var(--title-bg-color);
 }
+.head a {
+  text-decoration: none;
+  color: var(--main-fg-color);
+}
 .head img {
   height: 1em;
   vertical-align: middle;
