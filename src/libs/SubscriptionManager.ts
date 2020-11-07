@@ -1,9 +1,10 @@
+
 export default class SubscriptionManager {
   itemToSubscriptionMap: Map<string, (() => void)[]>;
   constructor() {
     this.itemToSubscriptionMap = new Map();
   }
-  subscribe(item : string, fn : () => void) {
+  subscribe(item: string, fn: () => void) {
     this.unsubscribe(item, fn);
     let fns = this.itemToSubscriptionMap.get(item);
     if (!fns) {
@@ -12,7 +13,7 @@ export default class SubscriptionManager {
     }
     fns.push(fn);
   }
-  unsubscribe(item : string, fn : () => void) {
+  unsubscribe(item: string, fn: () => void): void {
     const fns = this.itemToSubscriptionMap.get(item);
     if (fns) {
       const ndx = fns.indexOf(fn);
@@ -24,7 +25,7 @@ export default class SubscriptionManager {
       }
     }
   }
-  notify(item : string) {
+  notify(item: string): void {
     const fns = this.itemToSubscriptionMap.get(item);
     if (fns) {
       for (const fn of fns.slice()) {

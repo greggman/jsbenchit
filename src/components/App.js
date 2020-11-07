@@ -11,7 +11,7 @@ import Load from './Load.js';
 import {isGistId, loadGistFromSrc} from '../libs/loader.js';
 import * as model from '../libs/model.js';
 import NamedCodeArea from './NamedCodeArea.js';
-import OAuthManager from '../libs/OAuthManager.js';
+import OAuthManager from '../libs/OAuthManager';
 import Platforms from './Platforms.js';
 import Save from './Save.js';
 import ServiceContext from '../ServiceContext.js';

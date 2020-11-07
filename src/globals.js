@@ -1,4 +1,4 @@
-import StorageManager from './libs/StorageManager.js';
+import StorageManager from './libs/StorageManager';
 import {isDevelopment} from './libs/flags.js';
 
 export const storageManager = new StorageManager('jsbenchit');

@@ -1,7 +1,7 @@
 import * as model from './model.js';
 import {isDevelopment} from './flags.js';
 import {createURL} from './url.js';
-import * as winMsgMgr from './window-message-manager.js';
+import * as winMsgMgr from './WindowMessageManager';
 
 export default class TestRunner extends EventTarget {
   abort() {
