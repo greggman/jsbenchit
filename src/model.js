@@ -2,7 +2,7 @@ import Ajv from 'ajv';
 
 import {isDevelopment} from './flags.js';
 import schema from './schema.json';
-import SubscriptionManager from './subscription-manager.js';
+import SubscriptionManager from './SubscriptionManager';
 
 const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
 const validator = ajv.compile(schema);

@@ -1,16 +1,9 @@
-function assertIsFunction(fn) {
-  const type = typeof fn;
-  if (type !== 'function') {
-    throw new Error('not a function');
-  }
-}
-
 export default class SubscriptionManager {
+  itemToSubscriptionMap: Map<string, (() => void)[]>;
   constructor() {
     this.itemToSubscriptionMap = new Map();
   }
-  subscribe(item, fn) {
-    assertIsFunction(fn);
+  subscribe(item : string, fn : () => void) {
     this.unsubscribe(item, fn);
     let fns = this.itemToSubscriptionMap.get(item);
     if (!fns) {
@@ -19,8 +12,7 @@ export default class SubscriptionManager {
     }
     fns.push(fn);
   }
-  unsubscribe(item, fn) {
-    assertIsFunction(fn);
+  unsubscribe(item : string, fn : () => void) {
     const fns = this.itemToSubscriptionMap.get(item);
     if (fns) {
       const ndx = fns.indexOf(fn);
@@ -32,7 +24,7 @@ export default class SubscriptionManager {
       }
     }
   }
-  notify(item) {
+  notify(item : string) {
     const fns = this.itemToSubscriptionMap.get(item);
     if (fns) {
       for (const fn of fns.slice()) {

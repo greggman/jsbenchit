@@ -1,4 +1,4 @@
-import SubscriptionManager from './subscription-manager.js';
+import SubscriptionManager from './SubscriptionManager';
 
 export default class StorageManager {
   constructor(prefix) {
