@@ -11,15 +11,15 @@ export default class LoadGist extends React.Component {
       gists: gists.getGists(),
     };
   }
-  onPatChange = (e) => {
+  handleNewGists = (gists) => {
+    this.setState({gists});
+  }
+  onUserStatusChange = () => {
     this.forceUpdate();
     const {userManager} = this.context;
     if (userManager.getUserData()) {
       this.loadGists();
     }
-  }
-  handleNewGists = (gists) => {
-    this.setState({gists});
   }
   componentDidMount() {
     const {userManager} = this.context;

@@ -8,7 +8,7 @@ export default class StorageManager {
   }
   _handleNewValue = (e) => {
     const key = e.key;
-    if (key.startsWith(this.prefix)) {
+    if (key && key.startsWith(this.prefix)) {
       const unPrefixedKey = key.substr(this.prefix.length);
       this.subscriptionManager.notify(unPrefixedKey);
     }
