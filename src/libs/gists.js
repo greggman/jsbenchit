@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import {storageManager} from './globals.js';
+import {storageManager} from '../globals.js';
 import * as model from './model';
 
 const gistsKey = 'gists';

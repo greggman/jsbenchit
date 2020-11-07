@@ -1,5 +1,5 @@
 import React from 'react';
-import {hsl} from './color-utils.js';
+import {hsl} from '../libs/color-utils.js';
 
 export default function Progress(props) {
   const {max, value, text} = props;

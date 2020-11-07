@@ -1,7 +1,7 @@
 import React from 'react';
-import {hsl} from './color-utils.js';
-import {classNames} from './css-utils.js';
-import {formatResults, testResultsAreValid} from './model.js';
+import {hsl} from '../libs/color-utils.js';
+import {classNames} from '../libs/css-utils.js';
+import {formatResults, testResultsAreValid} from '../libs/model.js';
 
 const darkMatcher = window.matchMedia
     ? window.matchMedia('(prefers-color-scheme: dark)')

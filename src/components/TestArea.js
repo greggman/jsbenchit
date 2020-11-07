@@ -1,7 +1,7 @@
 import React from 'react';
 import CodeArea from './CodeArea.js';
 import EditLine from './EditLine.js';
-import * as model from './model.js';
+import * as model from '../libs/model.js';
 
 export default class TestArea extends React.Component {
 //  constructor(props) {

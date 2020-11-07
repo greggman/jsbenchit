@@ -1,7 +1,7 @@
 import React from 'react';
 import Results from './Results';
 import {parse} from 'platform';
-import * as model from './model.js';
+import * as model from '../libs/model.js';
 
 export default class Tests extends React.Component {
   handleChange = () => {

@@ -1,5 +1,5 @@
 
-import {clientId} from './globals.js';
+import {clientId} from '../globals.js';
 import {createURL} from './url.js';
 import {createPopup} from './utils.js';
 import * as winMsgMgr from './window-message-manager.js';

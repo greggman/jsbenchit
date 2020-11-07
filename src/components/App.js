@@ -1,25 +1,25 @@
 import React from 'react';
 
-import { classNames } from './css-utils.js';
+import { classNames } from '../libs/css-utils.js';
 import EditLine from './EditLine.js';
 import Footer from './Footer.js';
-import GitHub from './GitHub.js';
-import {storageManager} from './globals.js';
+import GitHub from '../libs/GitHub.js';
+import {storageManager} from '../globals.js';
 import Help from './Help.js';
 import LatestResults from './LatestResults.js';
 import Load from './Load.js';
-import {isGistId, loadGistFromSrc} from './loader.js';
-import * as model from './model.js';
+import {isGistId, loadGistFromSrc} from '../libs/loader.js';
+import * as model from '../libs/model.js';
 import NamedCodeArea from './NamedCodeArea.js';
-import OAuthManager from './OAuthManager.js';
+import OAuthManager from '../libs/OAuthManager.js';
 import Platforms from './Platforms.js';
 import Save from './Save.js';
-import ServiceContext from './ServiceContext.js';
+import ServiceContext from '../ServiceContext.js';
 import Split from './Split.js';
 import TestArea from './TestArea.js';
-import TestRunner from './TestRunner.js';
+import TestRunner from '../libs/TestRunner.js';
 import Tests from './Tests.js';
-import UserManager from './UserManager.js';
+import UserManager from '../libs/UserManager.js';
 
 import './App.css';
 

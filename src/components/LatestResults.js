@@ -1,6 +1,6 @@
 import React from 'react';
 import Results from './Results';
-import * as model from './model';
+import * as model from '../libs/model';
 
 export default class LatestResults extends React.Component {
 //  constructor(props) {

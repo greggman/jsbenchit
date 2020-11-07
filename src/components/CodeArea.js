@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Resizable} from 're-resizable';
 import Code from './Code.js';
-import {classNames} from './css-utils.js';
+import {classNames} from '../libs/css-utils.js';
 
 export default function CodeArea(props) {
   const {value, hackKey, heading, extra = [], options = {}, onValueChange} = props;
