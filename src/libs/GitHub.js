@@ -181,3 +181,12 @@ export async function getAnonGist(gist_id) {
     rawData: gist,
   };
 }
+
+export function getUserData(data) {
+  return (data && data.owner)
+      ? {
+          name: data.owner.login,
+          avatarURL: data.owner.avatar_url,
+      }
+      : undefined;
+}

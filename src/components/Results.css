@@ -1,0 +1,63 @@
+/* -------------------- */
+.results-group {
+  margin-bottom: 1em;
+}
+.results-group>div:nth-child(1) {
+  padding-left: 10px;
+}
+.results {
+  background: var(--title-bg-color);
+  padding: 10px;
+}
+.results>div {
+  overflow: hidden;
+}
+.result {
+  position: relative;
+  background: rgba(0, 0, 0, 0.1);
+}
+.result.un-run {
+  background: var(--un-run-bg-color);
+}
+.result.aborted {
+  background-color: var(--aborted-bg-color);
+  background-image: url(/resources/images/bad.svg);
+  background-repeat: no-repeat no-repeat;
+  background-position: center center;
+}
+.result-bar {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  min-width: 1px;
+  transition: width 0.2s ease-out;
+}
+.result-info {
+  position: relative;
+  z-index: 2;
+}
+.result-name {
+  background: rgba(0,0,0,0.2);
+  font-size: smaller;
+  padding: 0 5px 0 5px;
+  white-space: nowrap;
+}
+.result-result {
+  padding: 0 5px 0 5px;
+  white-space: nowrap;
+}
+.results .delete:hover {
+  color: red;
+}
+.results .delete {
+  display: none;
+  float: right;
+  cursor: default;
+  user-select: none;
+  font-weight: bold;
+}
+.results:hover .delete {
+  display: block;
+}
+/* ----------------------- */
