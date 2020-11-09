@@ -92,7 +92,7 @@ async function main() {
   if (params.resize) {
     const observer = new ResizeObserver(entries => {
       window.parent.postMessage({
-        type: 'resize',
+        type: 'jsbenchit-resize',
         data: {
           width: document.body.scrollWidth,
           height: document.body.scrollHeight,
