@@ -25,7 +25,7 @@ export default function Embed(props) {
         { !!gistId &&
             <React.Fragment>
               <p>
-              For example:
+              For example embedding the current gist via script:
               </p>
               <pre><code style={{userSelect: 'all'}}>
       &lt;script src="https://jsbenchit.org/embed-resize.js" defer data-jsbenchit="src={gistId}&amp;results=latest"&gt;&lt;/script&gt;
@@ -43,7 +43,7 @@ export default function Embed(props) {
         { !!gistId &&
             <React.Fragment>
               <p>
-              For example:
+              For example, embedding the current gist via iframe:
               </p>
               <pre><code style={{userSelect: 'all'}}>
       &lt;iframe src="https://jsbenchit.org/embed.html?src={gistId}&amp;results=latest"&gt;&lt;/iframe&gt;
