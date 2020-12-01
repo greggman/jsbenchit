@@ -49,7 +49,7 @@ export default class GistComments extends React.Component {
     const {userManager} = this.context;
     const userData = userManager.getUserData() || {};
     const {gistId} = this.props;
-    const url = createURL('https://jsgist.devcomments.org/gist-comments.html', {gist_id: gistId, url: helperUrl, gitUserId: userData.id});
+    const url = createURL('https://jsbenchit.devcomments.org/gist-comments.html', {gist_id: gistId, url: helperUrl, gitUserId: userData.id});
     return (
       <div>
         { !!gistId &&

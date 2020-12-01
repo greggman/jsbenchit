@@ -40,7 +40,7 @@ class Preview extends React.Component {
     winMsgMgr.remove('resize', this.iframeRef.current.contentWindow, this.handleResize);
   }
   render() {
-    const url = createURL('https://jsgist.devcomments.org/gist-comments.html', {preview: true, url: helperUrl});
+    const url = createURL('https://jsbenchit.devcomments.org/gist-comments.html', {preview: true, url: helperUrl});
     return (
       <iframe title="comment-preview" ref={this.iframeRef} src={url} />
     );
