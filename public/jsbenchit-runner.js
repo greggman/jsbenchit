@@ -1,8 +1,34 @@
-(function() {
-  let iframe;
-
+(async function() {
+  const log = () => {};
   const params = Object.fromEntries(new URLSearchParams(window.location.search).entries());
   const url = new URL(params.url);
+  let iframe;
+
+  async function startServiceWorker() {
+    // await waitForLoad();
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register('/service-worker.js');
+        log('ServiceWorker registration successful with scope: ', registration.scope);
+        return registration;
+      } catch (err) {
+        log('ServiceWorker registration failed: ', err);
+      }
+    }
+  }
+  await startServiceWorker();
+  const worker = navigator.serviceWorker?.controller || navigator.serviceWorker?.active;
+
+  function cacheFile(pathname, type, content) {
+    worker.postMessage({
+      type: 'cacheFile',
+      data: {
+        pathname, // : '/moo.js',
+        type,     // : 'application/javascript',
+        content,  // 
+      },
+    });
+  }
 
   function find(files, endings) {
     // calling toLowerCase a bunch is bad but there will never be more than a few files
@@ -30,24 +56,8 @@
     document.body.appendChild(script);
   }
 
-  function insertInBlob(mainHTML, mainJS, mainCSS) {
-    const style = document.createElement('style');
-    style.textContent = `
-html, body, iframe {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
-iframe {
-  border: none;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-`;
-    document.head.appendChild(style);
-    const iframe = document.createElement('iframe');
-    const html = `<!DOCTYPE html>
+  function makePageHTML(mainHTML, mainJS, mainCSS) {
+    return `<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -69,9 +79,43 @@ ${mainJS.content}
   </${'script'}>
 </html>
 `;
+  }
+
+  function applyCSSToSelfToRunContentInIFrame() {
+    const style = document.createElement('style');
+    style.textContent = `
+html, body, iframe {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+iframe {
+  border: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+`;
+    document.head.appendChild(style);
+  }
+
+  function insertInBlob(mainHTML, mainJS, mainCSS) {
+    applyCSSToSelfToRunContentInIFrame();
+    const iframe = document.createElement('iframe');
+    const html = makePageHTML(mainHTML, mainJS, mainCSS);
     const blob = new Blob([html], {type: 'text/html'});
     document.body.appendChild(iframe);
     iframe.src = URL.createObjectURL(blob);
+    return iframe;
+  }
+
+  function insertInServiceWorker(mainHTML, mainJS, mainCSS) {
+    applyCSSToSelfToRunContentInIFrame();
+    const iframe = document.createElement('iframe');
+    const html = makePageHTML(mainHTML, mainJS, mainCSS);
+    cacheFile('/user-jsbenchit.html', 'text/html', html);
+    document.body.appendChild(iframe);
+    iframe.src = '/user-jsbenchit.html';
     return iframe;
   }
 
@@ -84,7 +128,17 @@ ${mainJS.content}
       if (data.inline) {
         insertInline(mainHTML, mainJS, mainCSS);
       } else {
-        iframe = insertInBlob(mainHTML, mainJS, mainCSS);
+        if (worker) {
+          // Using a service worker allows the URL for the loaded
+          // page to be constant so the debugger is happy.
+          iframe = insertInServiceWorker(mainHTML, mainJS, mainCSS);
+        } else {
+          // if we use a blob it's hard to debug because the blob
+          // will be a different URL every reload which means
+          // the debugger will assume it's a different page
+          // and not apply breakpoints etc...
+          iframe = insertInBlob(mainHTML, mainJS, mainCSS);
+        }
       }
     },
   };
