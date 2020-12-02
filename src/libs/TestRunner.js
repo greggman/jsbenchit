@@ -3,7 +3,12 @@ import {isDevelopment} from './flags.js';
 import {createURL} from './url.js';
 import * as winMsgMgr from './WindowMessageManager';
 
+const log = _ => _;
+//const log = console.log.bind(console);
+
+
 export default class TestRunner extends EventTarget {
+  static lastIframe;
   abort() {
     if (this._abortImpl) {
       this._abortImpl();
@@ -12,10 +17,15 @@ export default class TestRunner extends EventTarget {
   run(data) {
     return new Promise(async(resolve, reject) => {
       model.clearAllTestResults();
+      let errors = 0;
 
       const runTests = (test) => {
         return new Promise((resolve, reject) => {
+          if (TestRunner.lastIframe) {
+            TestRunner.lastIframe.remove();
+          }
           const iframe = document.createElement('iframe');
+          TestRunner.lastIFrame = iframe;
 
           const base = isDevelopment
               ? 'http://localhost:8080'
@@ -67,7 +77,8 @@ export default class TestRunner extends EventTarget {
             winMsgMgr.remove('cycle', null, handleCycle);
             winMsgMgr.remove('complete', null, handleComplete);
             winMsgMgr.remove('gimmeDaCodez', null, handleGimmeDaCodez);
-            iframe.remove();
+            // keep the iframe around so the debugger can look at it.
+            // iframe.remove()
             resolve(result);
           };
 
@@ -94,26 +105,32 @@ export default class TestRunner extends EventTarget {
 
           // error caught by window.addEventListener('error')
           const handleUncaughtError = (data) => {
+            log('handleUncaughtError:', data);
             abort();
             resolve({success: false, data});
           };
           // benchmark onAbort
           const handleAbort = (data) => {
+            log('handleAbort:', data);
             cleanup({success: true, data: {message: 'aborted because of error'}});
           };
           // benchmark onError
           const handleError = (data) => {
+            log('handleError:', data);
+            ++errors;
             updateTestResults(data);
           };
           // benchmark onCycle
           const handleCycle = (data) => {
+            log('handleCycle:', data);
             if (!test) {
               updateTestResults(data)
             }
           };
           // benchmark onComplete
           const handleComplete = (data) => {
-            cleanup({success: true, data});
+            log('handleComplete:', data);
+            cleanup({success: errors === 0, data});
           };
           const handleGimmeDaCodez = () => {
             iframe.contentWindow.postMessage({
@@ -142,7 +159,11 @@ export default class TestRunner extends EventTarget {
       // we don't have to wait for all the other
       // tests to run to get a notified.
       try {
-        await runTests(true);
+        const result = await runTests(true);
+        if (!result.success) {
+          resolve(result);
+          return;
+        }
       } catch (e) {
         resolve({success: false, e});
         return;

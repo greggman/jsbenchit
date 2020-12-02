@@ -166,7 +166,7 @@ class App extends React.Component {
       data: model.data,
       gistOwnerId: this.state.gistOwnerId,
     }), true);
-    console.log('--start--');
+    // console.log('--start--');
     try {
       const testRunner = new TestRunner();
       testRunner.addEventListener('progress', (e) => {
@@ -182,7 +182,7 @@ class App extends React.Component {
     }
     this.abort = undefined;
     storageManager.delete(backupKey, true);
-    console.log('--done--');
+    // console.log('--done--');
     this.setState({running: false});
   }
   handleSave = async () => {

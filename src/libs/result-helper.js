@@ -14,7 +14,7 @@ export function createResult(props, e) {
   const {aborted, hz} = result;
   const unRun = hz === undefined;
   const msg = aborted ? 
-     'aborted' :
+     'error/aborted' :
      unRun
          ? 'not run'
          : formatResults(result);
