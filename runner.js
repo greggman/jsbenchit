@@ -2,6 +2,8 @@
 /* global model */
 
 (async function() {
+  const log = _ => _;
+  //const log = console.log.bind(console);
   const benchmarkToData = b => {
     const stats = {
       ...(b.stats && b.stats),
@@ -34,16 +36,21 @@
   }
 
   const suite = new Benchmark.Suite('WTF', {
-    onAbort: () => {},
+    onAbort: (e) => {
+      log('onAbort:', e);
+    },
     onError: (e) => {
+      log('onError:', e);
       const data = benchmarkToData(e.target);
       window.parent.postMessage({type: 'error', data}, "*");
     },
     onCycle: (e) => {
+      log('onCycle:', e);
       const data = benchmarkToData(e.target);
       window.parent.postMessage({type: 'cycle', data}, "*");
     },
     onComplete: (e) => {
+      log('onComplete:', e);
       const data = e.currentTarget.map(benchmarkToData);
       window.parent.postMessage({type: 'complete', data}, "*");
     },
