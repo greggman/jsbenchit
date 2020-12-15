@@ -59,6 +59,10 @@
     name: `${i}`,
     fn: test.code,
   }));
+  if (Benchmark.init) {
+    await Benchmark.init();
+  }
+
   Benchmark.prototype.setup = model.setup;
   suite.run({
     async: true,
