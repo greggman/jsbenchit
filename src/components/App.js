@@ -160,7 +160,7 @@ class App extends React.Component {
     model.setData(model.getNewTestData());
   }
   handleRun = async () => {
-    this.setState({running: true, testNum: 0});
+    this.setState({running: true, testNum: -1});
     storageManager.set(backupKey, JSON.stringify({
       href: window.location.href,
       data: model.data,
@@ -170,7 +170,7 @@ class App extends React.Component {
     try {
       const testRunner = new TestRunner();
       testRunner.addEventListener('progress', (e) => {
-        this.setState({testNum: e.data.testNdx + 1});
+        this.setState({testNum: e.data.testNdx});
       });
       this.abort = testRunner.abort.bind(testRunner);
       const {success, data} = await testRunner.run(model.data);
@@ -331,7 +331,10 @@ class App extends React.Component {
                     </div>
                     <div className="blocked" style={hideStyle}>
                       <div className="abort">
-                        <div>Testing {testNum + 1} of {data.tests.length}</div>
+                        {testNum >= 0
+                           ? <div>Testing {testNum + 1} of {data.tests.length}</div>
+                           : <div>Initializing</div>
+                        }
                         <div>Time remaining: ~{(data.tests.length - testNum) * 5}s</div>
                         <div><button onClick={this.handleAbort}>Stop Benchmark</button></div>
                       </div>

@@ -62,6 +62,7 @@
   if (Benchmark.init) {
     await Benchmark.init();
   }
+  window.parent.postMessage({type: 'start'}, '*');
 
   Benchmark.prototype.setup = model.setup;
   suite.run({

@@ -90,17 +90,21 @@ export default class TestRunner extends EventTarget {
           };
           this._abortImpl = abort;
 
+          const sendProgress = (ndx) => {
+            const event = new Event('progress');
+            event.data = {
+              testNdx: ndx
+            };
+            this.dispatchEvent(event);
+          }
+
           const updateTestResults = (data) => {
             const ndx = parseInt(data.name);
             const newData = {...data};
             delete newData.id;
             delete newData.name;
             model.setTestResult(ndx, newData, window.navigator.userAgent);
-            const event = new Event('progress');
-            event.data = {
-              testNdx: ndx
-            };
-            this.dispatchEvent(event);
+            sendProgress(ndx + 1);
           };
 
           // error caught by window.addEventListener('error')
@@ -113,6 +117,11 @@ export default class TestRunner extends EventTarget {
           const handleAbort = (data) => {
             log('handleAbort:', data);
             cleanup({success: true, data: {message: 'aborted because of error'}});
+          };
+          const handleStart = () => {
+            if (!test) {
+              sendProgress(0);
+            }
           };
           // benchmark onError
           const handleError = (data) => {
@@ -142,6 +151,7 @@ export default class TestRunner extends EventTarget {
           winMsgMgr.on('uncaughtError', null, handleUncaughtError);
           winMsgMgr.on('abort', null, handleAbort);
           winMsgMgr.on('error', null, handleError);
+          winMsgMgr.on('start', null, handleStart);
           winMsgMgr.on('cycle', null, handleCycle);
           winMsgMgr.on('complete', null, handleComplete);
           winMsgMgr.on('gimmeDaCodez', null, handleGimmeDaCodez);

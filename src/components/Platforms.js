@@ -16,7 +16,7 @@ export default class Platforms extends React.Component {
     const tests = model.getTests();
     return createPlatforms({
       tests,
-      onClickFactory: platform => platform => model.deleteTestPlatform(platform),
+      onClickFactory: platform => _ => model.deleteTestPlatform(platform),
     }, React.createElement);
   }
 }
