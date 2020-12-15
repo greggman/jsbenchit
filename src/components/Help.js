@@ -3,6 +3,15 @@ import Dialog from './Dialog.js';
 
 export default function Help(props) {
   const {onClose} = props;
+  const asyncInitCode = `
+Benchmark.init = () => {
+  return new Promise(resolve => {
+    window.img = new Image();
+    img.onload = resolve;
+    img.src = 'url-for-img';
+  });
+}
+`.trim();
   return (
     <Dialog title="jsBenchIt" onClose={onClose}>
       <div className="markdown">
@@ -49,6 +58,12 @@ export default function Help(props) {
           </p>
         </li>
       </ol>
+    <h2>Asynchronous Initialization</h2>
+    <p>Only the "Initialization" portion may be asynchronous. To make
+     the initialization asynchronous set <code>Benchmark.init</code> to function
+     that returns a <code>Promise</code>. Example:
+    </p>
+    <pre><code>{asyncInitCode}</code></pre>
     <h2>Comparing across browsers</h2>
     <p>
       Saving saves the results of the benchmark so if you want to compare

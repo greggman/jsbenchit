@@ -329,6 +329,9 @@ button:hover {
   border-radius: 0.5em;
   line-height: 2;
 }
+.markdown pre>code {
+  line-height: 1;
+}
 .gists {
   background-color: rgba(0, 0, 255, 0.1);
   width: 100%;
