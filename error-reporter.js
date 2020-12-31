@@ -1,5 +1,6 @@
 // in separate script tag so we get error from other script's
 // syntax errors
+/* -- the benchmark code doesn't like this --
 window.addEventListener('error', (e) => {
   console.error(e);
   const data = {
@@ -10,3 +11,4 @@ window.addEventListener('error', (e) => {
   }
   window.parent.postMessage({type: 'uncaughtError', data}, "*");
 });
+*/
