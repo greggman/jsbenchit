@@ -47,8 +47,10 @@ async function main() {
     const avatarElem = document.querySelector('#avatar');
     avatarElem.src = userData.avatarURL;
   }
+  const title = data.title || 'jsBenchIt';
+  document.title = title;
   const a = document.querySelector('.head a');
-  a.textContent = `jsBenchIt - ${data.title}`;
+  a.textContent = title;
   a.href = createURL(window.location.origin, {src: params.src});
   if (params.noheader) {
     document.querySelector('.head').style.display = 'none';

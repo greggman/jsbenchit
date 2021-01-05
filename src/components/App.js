@@ -119,6 +119,14 @@ class App extends React.Component {
     if (!loaded && query.src) {
       this.loadData(query.src);
     }
+    this.updateTitle();
+  }
+  componentDidUpdate() {
+    this.updateTitle();
+  }
+  updateTitle() {
+    const data = model.data;
+    document.title = data.title || 'jsBenchIt';
   }
   async loadData(src) {
     this.setState({loading: true});
