@@ -207,7 +207,10 @@ class App extends React.Component {
   }
   handleOnSave = (gistId) => {
     window.history.pushState({}, '', `${window.location.origin}?src=${gistId}`);
-    this.setState({gistId});
+    this.setState({
+      gistId,
+      gistOwnerId: this.userManager.getUserData().id,
+    });
   }
   handleAbort = () => {
     this.abort();
