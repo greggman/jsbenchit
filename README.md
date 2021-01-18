@@ -5,7 +5,9 @@ See [jsbenchit.org](https://jsbenchit.org)
 A JavaScript Perf Tester based on Github Gists.
 It's your data! 😍
 
-Also see [jsgist.org](https://jsgist.org)
+# Docs
+
+[See Here](docs/index.md)
 
 ## Why? 
 
@@ -40,3 +42,7 @@ In any case this is open source so contributions welcome.
    As it is you need to go to github to delete
 
 ## License: [MIT](LICENSE.md)
+
+## Misc
+
+Also see [jsgist.org](https://jsgist.org)

@@ -21,7 +21,8 @@ Benchmark.init = () => {
       <p>
         <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit">https://github.com/greggman/jsbenchit</a>
       </p>
-      <p>Also see <a target="_blank" rel="noopener noreferrer" href="https://jsgist.org">jsgist.org</a></p>
+      <h2>Docs</h2>
+      <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/docs/index.md">See Here</a>.</p>
       <h2>Saving</h2>
       <p>You can save your tests in multiple ways.</p>
       <ol>
@@ -91,6 +92,8 @@ Benchmark.init = () => {
     <p>Repeat steps 4, 5, 6 on other browsers.</p>
     <p>Note: In general it only makes sense to compare results of browsers
        on the same machine.</p>
+    <hr/>
+    <p>Also see <a target="_blank" rel="noopener noreferrer" href="https://jsgist.org">jsgist.org</a></p>
     </div>
     </Dialog>
   );
