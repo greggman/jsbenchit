@@ -1,5 +1,35 @@
 # JsBenchIt
 
+## The Flow
+
+short version
+
+```
+Initialization()
+for each test
+  while 5 seconds have not passed
+    BeforeEachTest()
+    test();
+```
+
+longer version
+
+```
+Initialization()
+for each test
+  elapsedTime = 0;
+  operations = 0;
+  while elapsedTime < 5 seconds
+    ++operations;
+    BeforeEachTest()
+    start = getTime()
+    test();
+    elapsedTime += getTime() - start;
+  result = operations / elapsedTime;
+```
+
+JsBenchIt uses [Benchmark.js](https://github.com/bestiejs/benchmark.js/). It tries to run each test as many times as possible for 5 seconds each so a short testcase might be run millions of times whereas a long testcase will be run less times. The result is how many times it was able to run the test in the given amount of time.
+
 ## How to write a valid benchmark
 
 ### Don't put non-essential code in a test case.
