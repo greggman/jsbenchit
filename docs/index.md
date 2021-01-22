@@ -64,7 +64,7 @@ might be fun but the site is for comparing algorithms, not machines.
 
 Browsers are vastly different which things they optimize well and which
 they don't so before you're sure your technique is a winner, check
-it's results in other browsers.
+its results in other browsers.
 
 ## Check work sizes
 
@@ -72,3 +72,16 @@ Sometimes an algorithm that's faster for 10 elements is slower
 for 10000 elements. You can't test these in the same test but
 at least be aware that certain algorithms might have overhead
 that's slower for small sets but pays off for large sets.
+
+## Be suspicous of differences under 5% 
+
+All kinds of things can make a test run slower. Another process on your
+machine might have grabbed some CPU time for example. Run the tests
+a few more times.
+
+## Be suspicious of order
+
+[This should probably be changed in jsbenchit](https://github.com/greggman/jsbenchit/issues/2)
+but given the flow above if the first test case generates lots of garbage,
+collecting that garbage might affect the second case. Consider copying the
+fastest case as another test case, just to check
