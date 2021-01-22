@@ -22,7 +22,7 @@ Benchmark.init = () => {
         <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit">https://github.com/greggman/jsbenchit</a>
       </p>
       <h2>Docs</h2>
-      <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/docs/index.md">See Here</a>.</p>
+      <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/blob/main/docs/index.md">See Here</a>.</p>
       <h2>Saving</h2>
       <p>You can save your tests in multiple ways.</p>
       <ol>
