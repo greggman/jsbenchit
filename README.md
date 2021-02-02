@@ -40,6 +40,10 @@ In any case this is open source so contributions welcome.
 - [ ] Let you delete gists?
 
    As it is you need to go to github to delete
+   
+- [ ] Better error handling
+
+   Something is eating error messages making it hard to debug.
 
 ## License: [MIT](LICENSE.md)
 
