@@ -36,16 +36,16 @@ export default class TestRunner extends EventTarget {
           <${'script'} src="${base}/3rdparty/platform.js"></${'script'}>
           <${'script'} src="${base}/3rdparty/benchmark.js"></${'script'}>
           <${'script'}>
-          const model = ${JSON.stringify({
+          ${data.initialization}
+          </${'script'}>
+          <${'script'}>
+          window.___model = ${JSON.stringify({
             ...data,
             settings: {
               ...(data.settings && data.settings),
               test,
             },
           })};
-          </${'script'}>
-          <${'script'}>
-          ${data.initialization}
           </${'script'}>
           <body>
           </body>
