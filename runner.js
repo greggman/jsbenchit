@@ -1,7 +1,8 @@
 /* global Benchmark */
-/* global model */
 
-(async function() {
+(async function(model) {
+  // there might be a cleaner way to do this but for now ...
+  delete window.model;
   const log = _ => _;
   //const log = console.log.bind(console);
   const benchmarkToData = b => {
@@ -17,10 +18,13 @@
       name: b.name,
       count: b.count,
       cycles: b.cycles,
+      message: b.message,
       hz: b.hz,
       stats,
       ...(b.times && {times: {...b.times}}),
-      ...(b.error && {error: {...b.error}}),
+      // error is a built in type like ReferenceError where
+      // the spread operator does not work
+      ...(b.error && {error: {message: b.error.message, stack: b.error.stack}}),
     };
   };
 
@@ -41,6 +45,11 @@
     },
     onError: (e) => {
       log('onError:', e);
+      if (e.target?.error) {
+        const ndx = e.target.id - 1;
+        const test = model.tests[ndx];
+        console.error(`${test?.name}:`, e.target.error);
+      }
       const data = benchmarkToData(e.target);
       window.parent.postMessage({type: 'error', data}, "*");
     },
@@ -70,6 +79,7 @@
     defer: true,
   });
 
+  /* abort is just iframe.src = 'about:blank'
   const handlers = {
     abort: () => {
       suite.abort();
@@ -80,4 +90,6 @@
     const {type, data} = e.data;
     handlers[type](data);
   });
-}());
+  */
+
+}(window.___model));
