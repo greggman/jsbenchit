@@ -47,6 +47,11 @@
   padding: 0 5px 0 5px;
   white-space: nowrap;
 }
+.result-error {
+  white-space: pre-wrap;
+  font-family: monospace;
+  padding: 0 5px 0 5px;
+}
 .results .delete:hover {
   color: red;
 }

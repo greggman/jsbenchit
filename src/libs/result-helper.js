@@ -11,13 +11,14 @@ export function createResult(props, e) {
   const isDarkMode = darkMatcher.matches;
   const {max, test, result, key} = props;
   const {name} = test;
-  const {aborted, hz} = result;
+  const {aborted, hz, error} = result;
   const unRun = hz === undefined;
   const msg = aborted ? 
      'error/aborted' :
      unRun
          ? 'not run'
          : formatResults(result);
+  const errorMsg = (error?.stack || error?.message || '');
   const zeroToOne = hz / max;
   const width = aborted || unRun ? '100%' : `${(zeroToOne * 100).toFixed(1)}%`;
   const background = (aborted || unRun) ? {} : {background: hsl(1 / 7 - zeroToOne / 7, 1, isDarkMode ? 0.4 : 0.8)};
@@ -30,7 +31,8 @@ export function createResult(props, e) {
     ),
     e('div', {key: 'b', className: "result-info"}, [
       e('div', {key: 'a', className: "result-name"}, name),
-      e('div', {key: 'b', className :"result-result"}, msg),
+      e('div', {key: 'b', className: "result-result"}, msg),
+      e('div', {key: 'c', className: "result-error"}, errorMsg),
     ]),
   ]);
 }
