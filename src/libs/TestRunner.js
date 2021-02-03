@@ -17,6 +17,7 @@ export default class TestRunner extends EventTarget {
   run(data) {
     return new Promise(async(resolve, reject) => {
       model.clearAllTestResults();
+      console.clear();
       let errors = 0;
 
       const runTests = (test) => {
