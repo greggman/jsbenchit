@@ -18,7 +18,7 @@ export function createResult(props, e) {
      unRun
          ? 'not run'
          : formatResults(result);
-  const errorMsg = (error?.stack || error?.message || '');
+  const errorMsg = ((error && error.stack) || (error && error.message) || '');
   const zeroToOne = hz / max;
   const width = aborted || unRun ? '100%' : `${(zeroToOne * 100).toFixed(1)}%`;
   const background = (aborted || unRun) ? {} : {background: hsl(1 / 7 - zeroToOne / 7, 1, isDarkMode ? 0.4 : 0.8)};
