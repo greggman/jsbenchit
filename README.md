@@ -41,9 +41,30 @@ In any case this is open source so contributions welcome.
 
    As it is you need to go to github to delete
    
-- [ ] Better error handling
+- [X] Better error handling
 
    Something is eating error messages making it hard to debug.
+
+- [ ] replace or refactor Benchmark.js
+
+   Benchmark.js is old, abandoned, and arguably has some issues.
+   
+   - [ ] make it use `performance.now`
+   
+   - [ ] add a means to  distinguish between an error in the
+     setup/teardown code and an error in a test case so we can tell the user which of those 3 places the error appears.
+   
+   - [ ] translate error
+     line numbers so that an error could say `error at test4 line 5`
+     where as now it says 
+     `Benchmark.uid1612323878896createFunction [as compiled] (<anonymous>:4:1)`
+     where the `4` includes the setup code
+
+- [ ] on error highlight or at least move the cursor to the correct line
+
+- [ ] display errors
+
+   Just display the errors above the latest results, clear it on run
 
 ## License: [MIT](LICENSE.md)
 
