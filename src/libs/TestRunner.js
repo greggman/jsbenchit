@@ -23,6 +23,7 @@ export default class TestRunner extends EventTarget {
       const runTests = (test) => {
         return new Promise((resolve, reject) => {
           if (TestRunner.lastIframe) {
+            TestRunner.lastIframe.src = 'about:blank';
             TestRunner.lastIframe.remove();
           }
           const iframe = document.createElement('iframe');
@@ -85,15 +86,14 @@ export default class TestRunner extends EventTarget {
             resolve(result);
           };
 
-          const abort = () => {
-            if (iframe.contentWindow) {
-              iframe.src = "about:blank";
-              //iframe.contentWindow.postMessage({type: 'abort'}, '*');
-            }
+          const abort = (message = '') => {
+            // we don't just delete the iframe because the user might
+            // want to inspect it.
+            iframe.contentWindow.postMessage({type: 'abort'}, '*');
             data.tests.forEach((test, i) => {
               model.setTestResult(i, {aborted: true}, window.navigator.userAgent);
             });
-            cleanup({success: true, data: {message: 'aborted'}});
+            cleanup({success: !message, data: {message}});
           };
           this._abortImpl = abort;
 
@@ -117,13 +117,12 @@ export default class TestRunner extends EventTarget {
           // error caught by window.addEventListener('error')
           const handleUncaughtError = (data) => {
             log('handleUncaughtError:', data);
-            abort();
-            resolve({success: false, data});
+            abort(data.message);
           };
           // benchmark onAbort
           const handleAbort = (data) => {
             log('handleAbort:', data);
-            cleanup({success: true, data: {message: 'aborted because of error'}});
+            cleanup({success: false, data: {message: 'aborted because of error'}});
           };
           const handleStart = () => {
             if (!test) {

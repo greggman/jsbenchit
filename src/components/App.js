@@ -43,6 +43,7 @@ class App extends React.Component {
       messages: [],
       userData: {},
       testNum: 0,
+      errorMsg: '',
     };
     this.github = new GitHub();
     this.testToKeyMap = new Map();
@@ -168,7 +169,7 @@ class App extends React.Component {
     model.setData(model.getNewTestData());
   }
   handleRun = async () => {
-    this.setState({running: true, testNum: -1});
+    this.setState({running: true, testNum: -1, errorMsg: ''});
     storageManager.set(backupKey, JSON.stringify({
       href: window.location.href,
       data: model.data,
@@ -183,6 +184,7 @@ class App extends React.Component {
       this.abort = testRunner.abort.bind(testRunner);
       const {success, data} = await testRunner.run(model.data);
       if (!success) {
+        this.setState({errorMsg: data?.message || ''});
         this.addError(`could not run benchmark:\n${stringOrEmpty(data?.message)}${stringOrEmpty(data?.filename, ':')}${stringOrEmpty(data?.lineno, ':')}${stringOrEmpty(data?.colno, ':')}`);
       }
     } catch(e) {
@@ -255,6 +257,7 @@ class App extends React.Component {
       userData,
       testNum,
       gistId,
+      errorMsg,
     } = this.state;
     const disabled = running;
     const hideStyle = {
@@ -352,6 +355,13 @@ class App extends React.Component {
                     </div>
                   </div>
                   <div className="right">
+                    {errorMsg && (
+                      <div className="results-group">
+                        <div className="result aborted">
+                          <div className="result-error">error:{'\n'}{errorMsg}</div>
+                        </div>
+                      </div>
+                    )}
                     <LatestResults/>
                     <Platforms/>
                     <Tests/>
