@@ -79,6 +79,7 @@
     defer: true,
   });
 
+  /* abort is just iframe.src = 'about:blank'
   const handlers = {
     abort: () => {
       suite.abort();
@@ -89,4 +90,6 @@
     const {type, data} = e.data;
     handlers[type](data);
   });
+  */
+
 }(window.___model));

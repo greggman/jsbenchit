@@ -36,9 +36,11 @@ export default class TestRunner extends EventTarget {
           <${'script'} src="${base}/3rdparty/lodash.js"></${'script'}>
           <${'script'} src="${base}/3rdparty/platform.js"></${'script'}>
           <${'script'} src="${base}/3rdparty/benchmark.js"></${'script'}>
+          <${'script'} src="${base}/pre-init.js"></${'script'}>
           <${'script'}>
           ${data.initialization}
           </${'script'}>
+          <${'script'} src="${base}/post-init.js"></${'script'}>
           <${'script'}>
           window.___model = ${JSON.stringify({
             ...data,
@@ -85,8 +87,12 @@ export default class TestRunner extends EventTarget {
 
           const abort = () => {
             if (iframe.contentWindow) {
-              iframe.contentWindow.postMessage({type: 'abort'}, '*');
+              iframe.src = "about:blank";
+              //iframe.contentWindow.postMessage({type: 'abort'}, '*');
             }
+            data.tests.forEach((test, i) => {
+              model.setTestResult(i, {aborted: true}, window.navigator.userAgent);
+            });
             cleanup({success: true, data: {message: 'aborted'}});
           };
           this._abortImpl = abort;
