@@ -7,6 +7,7 @@
   --code-area-bg-color: #CCC;
   --un-run-bg-color: #8AF;
   --aborted-bg-color: #DDD;
+  --fade-bg-color: rgba(255, 255, 255, 0.9);
 }
 html {
   box-sizing: border-box;
@@ -459,6 +460,7 @@ hr {
     --code-area-bg-color: #555;
     --un-run-bg-color: blue;
     --aborted-bg-color: #000;
+    --fade-bg-color: rgba(0, 0, 0, 0.5);
   }
   .CodeMirror-overlayscroll-horizontal div,
   .CodeMirror-overlayscroll-vertical div {
