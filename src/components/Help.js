@@ -70,14 +70,14 @@ Benchmark.init = () => {
       Saving saves the results of the benchmark so if you want to compare
       across browsers:
     </p>
-    <h3>With Personal Access Token</h3>
+    <h3>With Github</h3>
     <ol>
       <li>Create your benchmark</li>
       <li>Run it</li>
-      <li>Save a new gist using Personal Access Token</li>
+      <li>Save a new gist</li>
       <li>Copy URL to another browser</li>
       <li>Run it</li>
-      <li>Save over old gist using Personal Access Token</li>
+      <li>Save over old gist (or save a new gist)</li>
     </ol>
     <p>Repeat steps 4, 5, 6 on other browsers.</p>
     <h3>With URL</h3>

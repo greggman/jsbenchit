@@ -51,7 +51,7 @@ In any case this is open source so contributions welcome.
    
    - [ ] make it use `performance.now`
    
-   - [ ] add a means to  distinguish between an error in the
+   - [ ] add a means to distinguish between an error in the
      setup/teardown code and an error in a test case so we can tell the user which of those 3 places the error appears.
    
    - [ ] translate error
@@ -62,7 +62,7 @@ In any case this is open source so contributions welcome.
 
 - [ ] on error highlight or at least move the cursor to the correct line
 
-- [ ] display errors
+- [X] display errors
 
    Just display the errors above the latest results, clear it on run
 
