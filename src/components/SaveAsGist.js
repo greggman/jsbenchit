@@ -18,7 +18,7 @@ export default class SaveAsGist extends React.Component {
     const {userManager} = this.context;
     userManager.unsubscribe(this.onPatChange);
   }
-  onPATChange = () => {
+  onPatChange = () => {
     this.forceUpdate();
   }
   saveNew = async() => {
