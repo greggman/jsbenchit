@@ -13,7 +13,7 @@
           "type": "object",
           "properties": {
             "numSamples": { "type": "integer" },
-            "rme": { "type:": "number" }
+            "rme": { "type": "number" }
           },
           "required": ["numSamples", "rme"]
         },
