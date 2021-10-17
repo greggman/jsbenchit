@@ -341,8 +341,9 @@ button:hover {
 .gists tr:nth-child(2n) {
   background-color: rgba(128, 160, 255, 0.2);
 }
-.gists td:nth-child(2n) {
+.gists td:nth-child(3n) {
   text-align: right;
+  white-space: nowrap;
 }
 
 .comment-notes {

@@ -42,13 +42,20 @@ storageManager.subscribe(gistsKey, () => {
   model.set('gists', getStoredGists());
 });
 
-export function addGist(id, name, date) {
-  const gist = {name, date};
+export function addGist(id, name, date, _public) {
+  const gist = {name, date, public: _public};
   if (!gistValidator(gist)) {
     throw new Error(`gist not valid:\n${gistValidator.errors.map(e => `${e.message}: ${e.dataPath}`)}`)
   }
   const gists = {...model.get('gists')};
   gists[id] = gist;
+  model.set('gists', gists);
+  saveGistsToLocalStorage(gists);
+}
+
+export function removeGist(id) {
+  const gists = {...model.get('gists')};
+  delete gists[id];
   model.set('gists', gists);
   saveGistsToLocalStorage(gists);
 }

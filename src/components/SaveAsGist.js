@@ -28,7 +28,7 @@ export default class SaveAsGist extends React.Component {
     let success = false;
     try {
       const {id, name, date} = await github.createGist(data);
-      gists.addGist(id, name, date);
+      gists.addGist(id, name, date, true);
       onSave(id);
       success = true;
     } catch (e) {
@@ -46,7 +46,7 @@ export default class SaveAsGist extends React.Component {
     let success = false;
     try {
       const {id, name, date} = await github.updateGist(gistId, data);
-      gists.addGist(id, name, date);
+      gists.addGist(id, name, date, true);
       success = true;
     } catch (e) {
       addError(`could not update gist: ${e}`)
@@ -64,7 +64,7 @@ export default class SaveAsGist extends React.Component {
     try {
       const {id: newId} = await github.forkGist(gistId);
       const {id, name, date} = await github.updateGist(newId, data);
-      gists.addGist(id, name, date);
+      gists.addGist(id, name, date, true);
       onSave(id);
       success = true
     } catch (e) {
