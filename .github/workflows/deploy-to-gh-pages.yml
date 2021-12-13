@@ -22,6 +22,9 @@ jobs:
           npm ci
           npm run pre-build
           npm run build-ci
+        env:
+          REACT_APP_OAUTH_HELPER_URL: ${{ secrets.REACT_APP_OAUTH_HELPER_URL }}
+          REACT_APP_DOMAIN: ${{ secrets.REACT_APP_DOMAIN }}
 
       - name: Deploy 📦
         uses: JamesIves/github-pages-deploy-action@3.6.2
