@@ -1,7 +1,6 @@
 import Ajv from 'ajv';
+import * as model from './model.js';
 import {storageManager} from '../globals.js';
-import * as model from './model';
-
 const gistsKey = 'gists';
 
 const gistSchema = {

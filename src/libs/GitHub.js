@@ -29,10 +29,10 @@ export default class GitHub extends EventTarget {
     if (pat !== this.pat) {
       this.pat = pat;
       if (pat) {
-      this.authorizedOctokit = new Octokit({
-        auth: pat,
-        userAgent,
-      });
+        this.authorizedOctokit = new Octokit({
+          auth: pat,
+          userAgent,
+        });
       } else {
         this.authorizedOctokit = undefined;
       }
@@ -81,8 +81,11 @@ export default class GitHub extends EventTarget {
     }
     return response.data;
   }
+
   async getUserGists() {
-    const gists = await this.authorizedOctokit.paginate(this.authorizedOctokit.gists.list);
+    const gists = await this.authorizedOctokit.paginate(
+        this.authorizedOctokit.gists.list,
+        {per_page: 100});
     return gists.filter(gist => !!gist.files['jsBenchIt.json']);
     // return await this.authorizedOctokit.gists.list();
   }
