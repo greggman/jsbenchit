@@ -2,6 +2,15 @@ import { Octokit } from '@octokit/rest';
 
 const userAgent = 'jsBenchIt v0.0.1';
 
+export function getUserData(data) {
+  return (data && data.owner)
+      ? {
+          name: data.owner.login,
+          avatarURL: data.owner.avatar_url,
+      }
+      : undefined;
+}
+
 const getGistContent = gist => JSON.parse(gist.files['jsBenchIt.json'].content);
 
 export default class GitHub extends EventTarget {
@@ -16,10 +25,11 @@ export default class GitHub extends EventTarget {
   get octokit() {
     return this.authorizedOctokit || this.unAuthorizedOctokit;
   }
+  // TODO: this does not belong here!
   _updateUserData(data) {
-    if (data.owner) {
-      this.user.name = data.owner.login;
-      this.user.avatarURL = data.owner.avatar_url;
+    const userData = getUserData(data);
+    if (userData) {
+      Object.assign(this.user, userData);
       const event = new Event('userdata');
       event.data = {...this.user};
       this.dispatchEvent(event);
