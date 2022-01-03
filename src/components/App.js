@@ -280,7 +280,7 @@ class App extends React.Component {
           <div className="head">
             <div>
               <a target="_blank" rel="noopener noreferrer" href={window.location.origin}> <img src="/resources/images/logo.svg" alt="logo"/>
-            jsBenchIt.org<span className="beta">(beta)</span></a>
+            {window.location.hostname}<span className="beta">(beta)</span></a>
             </div>
             <div>
             <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/">
