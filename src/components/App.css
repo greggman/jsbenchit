@@ -29,17 +29,16 @@ html, body {
 }
 .head {
   display: flex;
-  font-size: xx-large;
+  font-size: larger;
   font-weight: bold;
   justify-content: space-between;
   align-items: center;
   margin: 0;
-  padding: 10px;
-  background: var(--title-bg-color);
 }
 .head a {
   text-decoration: none;
   color: var(--main-fg-color);
+  display: flex;
 }
 .head img {
   height: 1em;
@@ -175,6 +174,11 @@ a {
 .top .right {
   display: flex;
   margin-left: 10px;
+  justify-content: space-between;
+  overflow: hidden;
+}
+.toolbar {
+  display: flex;
 }
 .left {
   position: relative;
@@ -436,11 +440,15 @@ hr {
     flex-direction: column;
     padding-top: 5px;
   }
+  .top {
+    flex-direction: column-reverse;
+  }
   .left {
     width: 100%;
   }
   .right {
     margin-left: 0;
+    margin-bottom: 5px;
   }
   .top .right {
     padding-top: 5px;

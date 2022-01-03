@@ -277,17 +277,6 @@ class App extends React.Component {
           userManager: this.userManager,
           backupManager: this.backupManager,
         }}>
-          <div className="head">
-            <div>
-              <a target="_blank" rel="noopener noreferrer" href={window.location.origin}> <img src="/resources/images/logo.svg" alt="logo"/>
-            {window.location.hostname}<span className="beta">(beta)</span></a>
-            </div>
-            <div>
-            <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/">
-              <img alt="github" src="/resources/images/octocat-icon.svg"/>
-            </a>
-            </div>
-          </div>
           <div className="top">
             <div className={classNames("left", {disabled})}>
               <div className="name">
@@ -297,14 +286,27 @@ class App extends React.Component {
               </div>
             </div>
             <div className="right">
-              { running
-                  ? <button tabIndex="1" onClick={this.handleAbort}>Cancel</button>
-                  : <button tabIndex="1" onClick={this.handleRun}>Run</button>
-              }
-              <button tabIndex="1" className={disabledClass} onClick={this.handleSave}>Save</button>
-              <button tabIndex="1" className={disabledClass} onClick={this.handleNew}>New</button>
-              <button tabIndex="1" className={disabledClass} onClick={this.handleLoad}>Load</button>
-              <button tabIndex="1" className={disabledClass} onClick={this.handleHelp}>?</button>
+              <div className="toolbar">
+                { running
+                    ? <button tabIndex="1" onClick={this.handleAbort}>Cancel</button>
+                    : <button tabIndex="1" onClick={this.handleRun}>Run</button>
+                }
+                <button tabIndex="1" className={disabledClass} onClick={this.handleSave}>Save</button>
+                <button tabIndex="1" className={disabledClass} onClick={this.handleNew}>New</button>
+                <button tabIndex="1" className={disabledClass} onClick={this.handleLoad}>Load</button>
+                <button tabIndex="1" className={disabledClass} onClick={this.handleHelp}>?</button>
+              </div>
+              <div className="head">
+                <div>
+                  <a target="_blank" rel="noopener noreferrer" href={window.location.origin}> <img src="/resources/images/logo.svg" alt="logo"/>
+                {window.location.hostname}</a>
+                </div>
+                <div>
+                <a target="_blank" rel="noopener noreferrer" href="https://github.com/greggman/jsbenchit/">
+                  <img alt="github" src="/resources/images/octocat-icon.svg"/>
+                </a>
+                </div>
+              </div>
             </div>
           </div>
           {
