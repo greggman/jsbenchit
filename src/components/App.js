@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BackupManager from './BackupManager.js';
 import { classNames } from '../libs/css-utils.js';
 import EditLine from './EditLine.js';
 import Footer from './Footer.js';
@@ -23,7 +24,6 @@ import UserManager from '../libs/UserManager.js';
 
 import './App.css';
 
-const backupKey = 'jsBenchIt-backup';
 const noJSX = () => [];
 const stringOrEmpty = (str, prefix = '', suffix = '') => str ? `${prefix}${str}${suffix}` : '';
 const darkMatcher = window.matchMedia('(prefers-color-scheme: dark)');
@@ -48,6 +48,7 @@ class App extends React.Component {
     this.github = new GitHub();
     this.testToKeyMap = new Map();
     this.oauthManager = new OAuthManager(storageManager);
+    this.backupManager = new BackupManager(storageManager);
     this.userManager = new UserManager({
       oauthManager: this.oauthManager,
       github: this.github,
@@ -97,7 +98,7 @@ class App extends React.Component {
     });
 
     const query = Object.fromEntries(new URLSearchParams(window.location.search).entries());
-    const backup = storageManager.get(backupKey, true);
+    const backup = this.backupManager.getBackup();
     let loaded = false;
     if (backup) {
       try {
@@ -115,7 +116,7 @@ class App extends React.Component {
       } catch (e) {
         //
       }
-      storageManager.delete(backupKey, true);
+      this.backupManager.clearBackup();
     }
     if (!loaded && query.src) {
       this.loadData(query.src);
@@ -167,14 +168,15 @@ class App extends React.Component {
   }
   handleNew = async() => {
     model.setData(model.getNewTestData());
+    this.backupManager.clearBackup();
   }
   handleRun = async () => {
     this.setState({running: true, testNum: -1, errorMsg: ''});
-    storageManager.set(backupKey, JSON.stringify({
+    this.backupManager.setBackup(JSON.stringify({
       href: window.location.href,
       data: model.data,
       gistOwnerId: this.state.gistOwnerId,
-    }), true);
+    }));
     // console.log('--start--');
     try {
       const testRunner = new TestRunner();
@@ -191,7 +193,7 @@ class App extends React.Component {
       this.addError(e);
     }
     this.abort = undefined;
-    storageManager.delete(backupKey, true);
+    this.backupManager.clearBackup();
     // console.log('--done--');
     this.setState({running: false});
   }
@@ -273,6 +275,7 @@ class App extends React.Component {
           addInfo: this.addInfo,
           storageManager,
           userManager: this.userManager,
+          backupManager: this.backupManager,
         }}>
           <div className="head">
             <div>
