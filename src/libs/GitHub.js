@@ -2,6 +2,15 @@ import { Octokit } from '@octokit/rest';
 
 const userAgent = 'jsBenchIt v0.0.1';
 
+export async function getAnonGist(gist_id) {
+  const req = await fetch(`https://api.github.com/gists/${gist_id}`);
+  const gist = await req.json();
+  return {
+    data: getGistContent(gist),
+    rawData: gist,
+  };
+}
+
 export function getUserData(data) {
   return (data && data.owner)
       ? {
@@ -9,6 +18,32 @@ export function getUserData(data) {
           avatarURL: data.owner.avatar_url,
       }
       : undefined;
+}
+
+function createGistData(data, secret, gist_id) {
+  const files = {
+    'jsBenchIt.json': {content: JSON.stringify(data)},
+  };
+  if (gist_id) {
+    // TODO: rather than check if there's a readme
+    // insert the readme in our wrapped readme.
+    // Maybe add a "notes" field to the save dialog
+    const lowerCaseFiles = Object.keys(files).map(n => n.toLowerCase());
+    const hadReadme = 
+        lowerCaseFiles.includes('readme.md') ||
+        lowerCaseFiles.includes('readme.txt') ||
+        lowerCaseFiles.includes('readme');
+    if (!hadReadme) {
+      const content = `## ${data.title}\n\n[view on jsbenchit](${window.location.origin}?src=${gist_id})`
+      files['README.md'] = {content};
+    }
+  }
+  return {
+    files,
+    description: data.title,
+    ...(!gist_id && {public: !secret}),
+    ...(gist_id && {gist_id}),
+  };
 }
 
 const getGistContent = gist => JSON.parse(gist.files['jsBenchIt.json'].content);
@@ -109,20 +144,11 @@ export default class GitHub extends EventTarget {
     this._updateUserData(gist.data);
     return getGistContent(gist.data);
   }
-  async createGist(data) {
-    const gist = await this.authorizedOctokit.gists.create({
-      description: data.title,
-      public: true,
-      files: {
-        'jsBenchIt.json': {content: JSON.stringify(data)},
-      },
-    });
+  async createGist(data, secret = false) {
+    const gistData = createGistData(data, secret);
+    const gist = await this.authorizedOctokit.gists.create(gistData);
     this._updateUserData(gist.data);
-    return {
-      id: gist.data.id,
-      name: gist.data.description,
-      date: gist.data.updated_at,
-    };
+    return await this.updateGist(gist.data.id, data, secret);
   }
   /* returns
 {status: 201, url: "https://api.github.com/gists", headers: {…}, data: {…}}
@@ -151,17 +177,9 @@ headers: {cache-control: "private, max-age=60, s-maxage=60", content-length: "48
 status: 201
 url: "https://api.github.com/gists"
   */
-  async updateGist(gist_id, data, isPublic = true) {
-    const gist = await this.authorizedOctokit.gists.update({
-      gist_id,
-      description: data.title,
-      files: {
-        'jsBenchIt.json': {
-          content: JSON.stringify(data),
-          filename: 'jsBenchIt.json',
-        },
-      },
-    });
+  async updateGist(gist_id, data) {
+    const gistData = createGistData(data, undefined, gist_id);
+    const gist = await this.authorizedOctokit.gists.update(gistData);
     return {
       id: gist.data.id,
       name: gist.data.description,
@@ -184,22 +202,4 @@ url: "https://api.github.com/gists"
     }
     return result.data;
   }
-}
-
-export async function getAnonGist(gist_id) {
-  const req = await fetch(`https://api.github.com/gists/${gist_id}`);
-  const gist = await req.json();
-  return {
-    data: getGistContent(gist),
-    rawData: gist,
-  };
-}
-
-export function getUserData(data) {
-  return (data && data.owner)
-      ? {
-          name: data.owner.login,
-          avatarURL: data.owner.avatar_url,
-      }
-      : undefined;
 }
