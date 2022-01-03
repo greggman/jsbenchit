@@ -167,8 +167,8 @@ class App extends React.Component {
     this.setState({dialog: noJSX});
   }
   handleNew = async() => {
-    model.setData(model.getNewTestData());
     this.backupManager.clearBackup();
+    window.location.href = window.location.origin;  // causes a reload
   }
   handleRun = async () => {
     this.setState({running: true, testNum: -1, errorMsg: ''});
