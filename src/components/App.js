@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BackupManager from './BackupManager.js';
 import { classNames } from '../libs/css-utils.js';
 import EditLine from './EditLine.js';
 import Footer from './Footer.js';
@@ -12,7 +11,6 @@ import Load from './Load.js';
 import {isGistId, loadGistFromSrc} from '../libs/loader.js';
 import * as model from '../libs/model.js';
 import NamedCodeArea from './NamedCodeArea.js';
-import OAuthManager from '../libs/OAuthManager';
 import Platforms from './Platforms.js';
 import Save from './Save.js';
 import ServiceContext from '../ServiceContext.js';
@@ -30,7 +28,7 @@ const darkMatcher = window.matchMedia('(prefers-color-scheme: dark)');
 const makeId = _ => `${Date.now()}+${Math.random()}`;
 
 class App extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       path: window.location.pathname,
@@ -45,10 +43,10 @@ class App extends React.Component {
       testNum: 0,
       errorMsg: '',
     };
-    this.github = new GitHub();
     this.testToKeyMap = new Map();
-    this.oauthManager = new OAuthManager(storageManager);
-    this.backupManager = new BackupManager(storageManager);
+    this.github = new GitHub();
+    this.oauthManager = props.oauthManager;
+    this.backupManager = props.backupManager;
     this.userManager = new UserManager({
       oauthManager: this.oauthManager,
       github: this.github,
@@ -122,6 +120,9 @@ class App extends React.Component {
       this.loadData(query.src);
     }
     this.updateTitle();
+  }
+  componentWillUnmount() {
+    this.useManager.cleanup();
   }
   componentDidUpdate() {
     this.updateTitle();
